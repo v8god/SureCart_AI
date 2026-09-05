@@ -1,4 +1,5 @@
 import Razorpay from "razorpay";
+import crypto from "crypto";
 import { Currency } from "@/types";
 
 export interface CreateOrderParams {
@@ -40,13 +41,120 @@ if (isConfigured) {
 }
 
 /**
+ * Creates an official Razorpay Order on the gateway (or sandbox mock)
+ */
+export async function createRazorpayGatewayOrder(
+  amount: number,
+  receipt: string,
+  notes: Record<string, string> = {}
+): Promise<{ id: string; amount: number; currency: string; is_mock: boolean }> {
+  const amountInPaise = Math.round(amount * 100);
+
+  if (razorpayClient && isConfigured) {
+    try {
+      const order = await razorpayClient.orders.create({
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: receipt.substring(0, 40),
+        notes: {
+          ...notes,
+          platform: "SureCart AI",
+          agentic_commerce: "true",
+        },
+      });
+
+      return {
+        id: order.id,
+        amount,
+        currency: "INR",
+        is_mock: false,
+      };
+    } catch (err) {
+      console.warn("Failed to create real Razorpay order, falling back to simulated order:", err);
+    }
+  }
+
+  const randomSuffix = Math.random().toString(36).substring(2, 9);
+  return {
+    id: `order_test_${randomSuffix}`,
+    amount,
+    currency: "INR",
+    is_mock: true,
+  };
+}
+
+/**
+ * Official HMAC-SHA256 Signature Verification for Razorpay payments
+ * Verifies that payment was legitimately captured by Razorpay without client-side tampering.
+ * Zero Card Credential Storage: no card numbers or CVVs are accepted or stored.
+ */
+export function verifyRazorpayPaymentSignature(
+  orderId: string,
+  paymentId: string,
+  signature: string,
+  secretOverride?: string
+): boolean {
+  const secret = secretOverride || keySecret || "surecart_sandbox_secret";
+  if (!orderId || !paymentId || !signature) {
+    return false;
+  }
+
+  // Simulated signatures in test mode
+  if (!isConfigured && signature.startsWith("sim_sig_")) {
+    return true;
+  }
+
+  try {
+    const generatedSignature = crypto
+      .createHmac("sha256", secret)
+      .update(`${orderId}|${paymentId}`)
+      .digest("hex");
+
+    return crypto.timingSafeEqual(
+      Buffer.from(generatedSignature, "utf-8"),
+      Buffer.from(signature, "utf-8")
+    );
+  } catch (err) {
+    console.error("Signature verification error:", err);
+    return false;
+  }
+}
+
+/**
+ * Webhook Signature Verification
+ */
+export function verifyWebhookSignature(
+  rawBody: string,
+  signature: string,
+  secretOverride?: string
+): boolean {
+  const secret = secretOverride || process.env.RAZORPAY_WEBHOOK_SECRET || "surecart_webhook_secret";
+  if (!rawBody || !signature) return false;
+
+  try {
+    const expectedSignature = crypto
+      .createHmac("sha256", secret)
+      .update(rawBody)
+      .digest("hex");
+
+    return crypto.timingSafeEqual(
+      Buffer.from(expectedSignature, "utf-8"),
+      Buffer.from(signature, "utf-8")
+    );
+  } catch (err) {
+    console.error("Webhook signature verification error:", err);
+    return false;
+  }
+}
+
+/**
  * Creates an order and processes test-mode capture or deliberate simulated decline.
  * Follows Rule R15–R18: Plain language grounded in real payment system reason,
  * no silent retries, concrete next steps.
  */
 export async function processRazorpayPayment(params: CreateOrderParams): Promise<RazorpayOrderResult> {
   const { amount, currency = "INR", receipt, notes = {}, simulateDecline, declineReasonCode } = params;
-  const amountInPaise = amount * 100;
+  const amountInPaise = Math.round(amount * 100);
 
   // Handle Deliberate Decline scenario (Flow C)
   if (simulateDecline) {
@@ -74,7 +182,7 @@ export async function processRazorpayPayment(params: CreateOrderParams): Promise
       const order = await razorpayClient.orders.create({
         amount: amountInPaise,
         currency,
-        receipt: receipt.substring(0, 40), // Razorpay receipt max 40 chars
+        receipt: receipt.substring(0, 40),
         notes: {
           ...notes,
           platform: "SureCart AI",
@@ -126,4 +234,8 @@ export async function processRazorpayPayment(params: CreateOrderParams): Promise
 
 export function isRazorpayConfigured(): boolean {
   return isConfigured;
+}
+
+export function getRazorpayKeyId(): string {
+  return keyId || "rzp_test_simulation";
 }

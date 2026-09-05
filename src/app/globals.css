@@ -2,38 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Premium Dark Theme - Custom Slate/Indigo Palette */
-  --background: #07090e;
-  --foreground: #f8fafc;
-  
-  --panel: #0d111c;
-  --panel-header: #121829;
-  --card: #151b2d;
-  
-  --border: rgba(255, 255, 255, 0.06);
-  --border-focus: rgba(99, 102, 241, 0.4);
-  
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  
-  /* Primary Accent - Warm Indigo */
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-foreground: #ffffff;
-  
-  /* Muted Semantics */
-  --success: #10b981;
-  --success-surface: rgba(16, 185, 129, 0.08);
-  --success-foreground: #a7f3d0;
-  
-  --warning: #f59e0b;
-  --warning-surface: rgba(245, 158, 11, 0.08);
-  --warning-foreground: #fde68a;
-  
-  --error: #f43f5e;
-  --error-surface: rgba(244, 63, 94, 0.08);
-  --error-foreground: #fecdd3;
+:root,
+[data-theme="light"] {
+  /* Light Mode - Warm neutral foundation with muted evergreen accent */
+  --background: #F7F7F4;
+  --surface: #FFFFFF;
+  --surface-subtle: #F1F2EE;
+  --surface-muted: #E8EAE5;
+  --border: #D8DBD4;
+  --border-strong: #BFC4BA;
+
+  --text-primary: #20231F;
+  --text-secondary: #5D625A;
+  --text-muted: #7A8077;
+  --text-inverse: #FFFFFF;
+
+  --accent: #176B5B;
+  --accent-hover: #125648;
+  --accent-active: #0E463B;
+  --accent-subtle: #E2F0EC;
+
+  --success: #287A4A;
+  --success-subtle: #E6F2E9;
+  --warning: #9A6812;
+  --warning-subtle: #F8EED9;
+  --error: #B33A32;
+  --error-subtle: #F8E6E4;
+
+  --focus-ring-color: rgba(23, 107, 91, 0.4);
+}
+
+[data-theme="dark"] {
+  /* Dark Mode - Charcoal surfaces with evergreen accent */
+  --background: #171916;
+  --surface: #20231F;
+  --surface-subtle: #272B26;
+  --surface-muted: #30352F;
+  --border: #373C35;
+  --border-strong: #4A5048;
+
+  --text-primary: #F1F2ED;
+  --text-secondary: #B7BDB4;
+  --text-muted: #858C83;
+  --text-inverse: #17201C;
+
+  --accent: #55A996;
+  --accent-hover: #69B7A5;
+  --accent-active: #408F7E;
+  --accent-subtle: #203C35;
+
+  --success: #67B47F;
+  --success-subtle: #20382A;
+  --warning: #D2A34A;
+  --warning-subtle: #3B301E;
+  --error: #E2776D;
+  --error-subtle: #3B2523;
+
+  --focus-ring-color: rgba(85, 169, 150, 0.4);
 }
 
 * {
@@ -42,7 +67,7 @@
 
 body {
   background-color: var(--background);
-  color: var(--foreground);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   overflow-x: hidden;
   margin: 0;
@@ -51,10 +76,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom subtle scrollbars */
+/* Subtle scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -62,52 +87,36 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--border-strong);
 }
 
-/* Modern Typography Utilities */
-.font-display {
-  font-family: var(--font-display), sans-serif;
-  letter-spacing: -0.02em;
-}
-
+/* Typography Utilities */
 .font-numeric {
   font-variant-numeric: tabular-nums;
 }
 
-/* Layout Scrollbars hidden (for horizontal flows) */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Glassmorphism utility for clean cards */
-.glass-panel {
-  background: rgba(13, 17, 28, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* Soft transition effects */
-.transition-smooth {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Unified focus shadow styling */
+/* Accessibility Focus Visible */
 .focus-ring {
   outline: none;
-  transition: all 0.15s ease;
 }
-.focus-ring:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion Respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

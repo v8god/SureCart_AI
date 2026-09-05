@@ -4,14 +4,14 @@ import { runAgentOrchestrator } from "@/lib/agent/orchestrator";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { message, sessionId, history = [] } = body;
+    const { message, sessionId, history = [], referencedContext } = body;
 
     if (!message || typeof message !== "string" || !message.trim()) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
     const currentSessionId = sessionId || `sess_${Date.now()}`;
-    const result = await runAgentOrchestrator(currentSessionId, message.trim(), history);
+    const result = await runAgentOrchestrator(currentSessionId, message.trim(), history, referencedContext);
 
     return NextResponse.json({
       sessionId: currentSessionId,

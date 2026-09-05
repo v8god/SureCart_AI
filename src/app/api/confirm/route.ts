@@ -102,7 +102,81 @@ export async function POST(req: NextRequest) {
     // 3. Mark token as confirmed / in-flight
     updateConfirmationTokenStatus(token, "confirmed");
 
-    // 4. Razorpay Payment Processing (Test Mode / Simulated Decline)
+    const now = new Date().toISOString();
+    const orderId = `ord_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const estDeliveryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString("en-IN", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    const trackingUrl = `https://track.surecart.ai/${orderId}`;
+    const receiptUrl = `/receipt?orderId=${orderId}`;
+
+    const isCODPayment = Boolean(
+      tokenRecord.payment_method &&
+        (tokenRecord.payment_method.toLowerCase().includes("cash on delivery") ||
+          tokenRecord.payment_method.toLowerCase().includes("cod"))
+    );
+
+    // FLOW: Cash on Delivery (COD) - No online payment processing needed
+    if (isCODPayment) {
+      const codOrder: Order = {
+        id: orderId,
+        catalog_item_id: tokenRecord.catalog_item_id,
+        item_name: tokenRecord.item_name,
+        amount: tokenRecord.amount,
+        currency: tokenRecord.currency,
+        razorpay_order_id: `COD_${orderId}`,
+        status: "cod_confirmed",
+        idempotency_key: tokenRecord.idempotency_key,
+        session_id: sessionId,
+        offer: tokenRecord.offer,
+        price_breakdown: tokenRecord.price_breakdown,
+        payment_method: "Cash on Delivery (COD)",
+        shipping_address: tokenRecord.shipping_address,
+        website: tokenRecord.offer?.site_name || "Official Merchant Store",
+        seller: tokenRecord.offer?.seller_name || "Verified Merchant",
+        product_url: tokenRecord.offer?.product_url || `https://store.surecart.ai/p/${tokenRecord.catalog_item_id}`,
+        tracking_url: trackingUrl,
+        delivery_date: estDeliveryDate,
+        receipt_url: receiptUrl,
+        created_at: now,
+      };
+
+      insertOrder(codOrder);
+      updateConfirmationTokenStatus(token, "spent");
+
+      insertAuditLog({
+        id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        timestamp: now,
+        session_id: sessionId,
+        actor: "system",
+        action_type: "order_created",
+        reasoning: `Cash on Delivery order confirmed for ${tokenRecord.item_name} — Total ₹${tokenRecord.amount.toLocaleString(
+          "en-IN"
+        )} payable on delivery. Delivery to [${tokenRecord.shipping_address?.tag.toUpperCase() || "HOME"}] by ${estDeliveryDate}.`,
+        payload: {
+          order_id: orderId,
+          amount: tokenRecord.amount,
+          payment_method: "Cash on Delivery (COD)",
+          delivery_date: estDeliveryDate,
+          tracking_url: trackingUrl,
+          shipping_address: tokenRecord.shipping_address || null,
+          status: "cod_confirmed",
+        },
+        result: "success",
+      });
+
+      return NextResponse.json({
+        success: true,
+        status: "cod_confirmed",
+        order: codOrder,
+        checks: guardrailResult.checks,
+      });
+    }
+
+    // FLOW: Razorpay Online Payment Processing (Test Mode / Live / Simulated Decline)
     const paymentResult = await processRazorpayPayment({
       amount: tokenRecord.amount,
       currency: tokenRecord.currency,
@@ -114,9 +188,6 @@ export async function POST(req: NextRequest) {
       simulateDecline: Boolean(simulateDecline),
       declineReasonCode,
     });
-
-    const now = new Date().toISOString();
-    const orderId = `ord_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
     // If Payment Succeeded (Flow A - Happy Path)
     if (paymentResult.success && paymentResult.status === "captured") {
@@ -131,6 +202,16 @@ export async function POST(req: NextRequest) {
         status: "captured",
         idempotency_key: tokenRecord.idempotency_key,
         session_id: sessionId,
+        offer: tokenRecord.offer,
+        price_breakdown: tokenRecord.price_breakdown,
+        payment_method: tokenRecord.payment_method || "Razorpay (UPI / Card / NetBanking)",
+        shipping_address: tokenRecord.shipping_address,
+        website: tokenRecord.offer?.site_name || "Amazon India",
+        seller: tokenRecord.offer?.seller_name || "Verified Retail Partner",
+        product_url: tokenRecord.offer?.product_url || `https://store.surecart.ai/p/${tokenRecord.catalog_item_id}`,
+        tracking_url: trackingUrl,
+        delivery_date: estDeliveryDate,
+        receipt_url: receiptUrl,
         created_at: now,
       };
 
@@ -146,12 +227,20 @@ export async function POST(req: NextRequest) {
         action_type: "order_created",
         reasoning: `Order created successfully. Razorpay Order: ${paymentResult.razorpay_order_id}, Payment: ${paymentResult.razorpay_payment_id} (Captured ₹${tokenRecord.amount.toLocaleString(
           "en-IN"
-        )})`,
+        )})${tokenRecord.offer ? ` via ${tokenRecord.offer.site_name} (${tokenRecord.offer.seller_name})` : ""}${
+          tokenRecord.shipping_address ? ` [Shipped to: ${tokenRecord.shipping_address.tag.toUpperCase()}]` : ""
+        }. Estimated delivery: ${estDeliveryDate}.`,
         payload: {
           order_id: orderId,
           razorpay_order_id: paymentResult.razorpay_order_id,
           razorpay_payment_id: paymentResult.razorpay_payment_id,
           amount: tokenRecord.amount,
+          offer: tokenRecord.offer || null,
+          price_breakdown: tokenRecord.price_breakdown || null,
+          payment_method: newOrder.payment_method,
+          shipping_address: tokenRecord.shipping_address || null,
+          tracking_url: trackingUrl,
+          delivery_date: estDeliveryDate,
           status: "captured",
           simulation_mode: paymentResult.is_simulation_mode,
         },
@@ -178,6 +267,10 @@ export async function POST(req: NextRequest) {
       status: "declined",
       idempotency_key: tokenRecord.idempotency_key,
       session_id: sessionId,
+      offer: tokenRecord.offer,
+      price_breakdown: tokenRecord.price_breakdown,
+      payment_method: tokenRecord.payment_method,
+      shipping_address: tokenRecord.shipping_address,
       failure_reason: paymentResult.error_description || "Payment was declined by payment system.",
       created_at: now,
     };

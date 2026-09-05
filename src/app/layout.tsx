@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "SureCart AI — Conversational Checkout with Bounded Policy",
-  description: "Agentic commerce shopping assistant with server-side guardrails, explicit buyer confirmation, and Razorpay test-mode integration.",
+  title: "SureCart AI — Conversational Checkout",
+  description: "Conversational checkout agent over an agent-readable catalog with server-side spend caps, explicit confirmation, and transparent audit logging.",
 };
 
 export default function RootLayout({
@@ -25,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} dark`}>
-      <body className="bg-background text-foreground antialiased min-h-screen selection:bg-indigo-600 selection:text-white font-sans">
+    <html lang="en" data-theme="dark" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="bg-background text-text-primary antialiased min-h-screen font-sans">
         {children}
       </body>
     </html>

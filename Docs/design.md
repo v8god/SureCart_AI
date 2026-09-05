@@ -1,444 +1,1294 @@
-# SureCart AI — UI/UX Design Specification
+# SureCart AI — Design System & UI Specification
 
-## 1. Design Intent
+> IMPORTANT IMPLEMENTATION RULE
+>
+> This document is the source of truth for SureCart AI's visual
+> design and interaction behavior.
+>
+> Do not replace existing design decisions merely because another
+> UI pattern appears more modern or visually impressive.
+>
+> When implementing a feature, preserve the existing design system
+> while applying the Human Interaction & Engagement Direction.
+>
+> Do not introduce AI-themed decoration, generic SaaS patterns,
+> unnecessary components, fake data, or functionality that is not
+> supported by the project requirements.
+>
+> The interface should feel intelligent through its behavior,
+> reasoning, hierarchy, and interaction quality rather than through
+> AI-themed visual decoration.
+>
+> If a new implementation conflicts with an existing rule in this
+> document, prefer the more specific rule and preserve the core
+> safety, authorization, accessibility, and trust requirements.
 
-SureCart AI is a conversational checkout system where an AI agent can help a buyer find a product and prepare an order, but cannot move money without being bounded by policy and explicitly confirmed by the buyer.
+## 1. Visual Theme & Atmosphere
 
-The interface should make this distinction immediately understandable:
+SureCart AI is a conversational commerce interface built around one central principle:
 
-> **The agent can recommend and prepare. The buyer authorizes. The system enforces.**
+> **The agent can assist with a purchase, but the system controls what it is allowed to do and the buyer controls authorization.**
 
-The UI should therefore prioritize:
+The interface should communicate **trust, control, clarity, and technical reliability** without looking like a security dashboard or a generic AI application.
 
-* Trust
-* Clarity
-* Explainability
-* Explicit consent
-* Visible system state
-* Minimal cognitive load
-* Strong separation between conversation and money-moving actions
-* A readable audit history
-* Graceful handling of failure
+### Design character
 
-The interface should feel like a real, thoughtfully designed fintech/product application rather than an "AI demo."
+The visual direction is:
 
-Do not use a generic AI-dashboard aesthetic.
-
-Avoid:
-
-* Excessive gradients
-* Neon/glowing effects
-* Glassmorphism everywhere
-* Floating decorative blobs
-* Excessive rounded cards
-* Emoji-based UI
-* AI robot imagery
-* Unnecessary animated effects
-* Decorative statistics that do not represent real system state
-* Fake activity or fabricated metrics
-* Excessive use of icons when text communicates the meaning better
-
-The visual language should be restrained, modern, functional, and human.
-
----
-
-# 2. Primary Product Surface
-
-The application is primarily a **conversational checkout workspace**.
-
-On desktop, the main screen consists of three visual areas:
-
-1. **Application header**
-2. **Conversation / checkout area**
-3. **Agent Activity / Audit Trail panel**
-
-The conversation is the primary workspace.
-
-The audit trail is a persistent secondary surface because explainability and auditability are core product requirements, not optional developer information.
-
-The confirmation card is part of the conversation but becomes a visually distinct blocking interaction whenever an order requires authorization.
-
----
-
-# 3. Desktop Layout
-
-Use a responsive two-column application layout.
-
-```text
-┌──────────────────────────────────────────────────────────────────────┐
-│ SureCart AI                                      Test Mode    Session  │
-├───────────────────────────────────────┬──────────────────────────────┤
-│                                       │                              │
-│             CONVERSATION              │      AGENT ACTIVITY          │
-│                                       │                              │
-│  Agent message                        │  Session activity             │
-│  Buyer message                        │                              │
-│  Tool activity                        │  ✓ Catalog searched          │
-│  Product information                  │  ✓ Product verified           │
-│                                       │  → Purchase proposed          │
-│  ┌───────────────────────────────┐    │  ✓ Buyer confirmed            │
-│  │ Purchase confirmation         │    │  → Guardrail check             │
-│  │                               │    │  ✓ Order created                │
-│  │ Item                           │    │                              │
-│  │ ₹ amount                       │    │                              │
-│  │ Why this purchase              │    │                              │
-│  │                               │    │                              │
-│  │ Cancel          Confirm order │    │                              │
-│  └───────────────────────────────┘    │                              │
-│                                       │                              │
-│                                       │                              │
-│  ─────────────────────────────────    │                              │
-│  Message the shopping agent...   Send │                              │
-└───────────────────────────────────────┴──────────────────────────────┘
-```
-
-The exact implementation may use CSS grid or flexbox, but the visual hierarchy should remain equivalent.
-
-### Desktop proportions
-
-* Conversation: approximately 65–70% of available width
-* Audit panel: approximately 30–35%
-* Header: full width
-* Conversation content should have a comfortable maximum reading width
-* Audit panel should remain independently scrollable
-* The message composer remains visually attached to the bottom of the conversation area
-
-Do not make the audit panel so wide that it competes with the conversation.
-
----
-
-# 4. Application Header
-
-The header should be compact and functional.
-
-Suggested structure:
-
-```text
-SureCart AI                                      TEST MODE
-Conversational checkout                        Session active
-```
-
-The header should communicate that this is a payment-enabled environment while making it unmistakable that the buildathon implementation uses Razorpay test mode.
-
-The test-mode indicator should be visually noticeable but not alarming.
-
-Do not use a large hero banner.
-
-Do not use marketing copy above the application.
-
-The application should feel like the user has already entered the product.
-
----
-
-# 5. Visual Identity
-
-## Overall aesthetic
-
-Use a restrained fintech/product aesthetic.
-
-The interface should feel:
-
-* Precise
-* Calm
 * Professional
-* Technical without being intimidating
-* Modern without looking futuristic
-* Trustworthy
-* Designed around information rather than decoration
+* Restrained
+* Modern
+* Editorially clean
+* Fintech-inspired
+* Information-focused
+* Human-designed
+* Calm under normal conditions
+* Clear during important actions
+* Serious when money is involved
 
-The design should resemble a carefully built financial/product workflow rather than a chatbot template.
+The design should feel closer to a **well-designed financial product or premium developer tool** than to an AI chatbot.
 
-## Typography
+### Important visual principle
 
-The application enforces a dual-typeface typographic system:
-- **Display Font**: `Plus Jakarta Sans` (`--font-display`), loaded from Google Fonts. Used for application headings, transaction amounts, and section titles to establish premium product framing.
-- **Body Font**: `Inter` (`--font-sans`), loaded from Google Fonts. Used for conversational text, details checklist, input composer, and body metadata.
-- **Monospace Font**: System monospaced stack (`--font-mono`). Used for order IDs, token hash strings, and timeline execution log timestamps.
+Do not make the product look "AI" through decoration.
 
-Prioritize:
-* Strong readability & comfortable line heights (`leading-relaxed`)
-* Precise numerical values using tabular numbers class (`font-numeric`)
-* Contrast weights (e.g. `font-semibold` or `font-extrabold`) for financial totals
+The intelligence of the product should be demonstrated through its interaction model:
 
-### Recommended Hierarchy
-- Application name: 14px / `font-semibold` / display tracking-tight
-- Section title: 12px uppercase / `font-bold` / font-mono tracking-wider
-- Message bubble text: 14px / `leading-relaxed` / sans-serif regular
-- Currency amount: 16px to 20px / `font-bold` or `font-extrabold` / font-numeric
-- Audit Timeline Log: 11px font-mono / muted gray
-- Accordion JSON Details: 10px font-mono / line-height relaxed
+```text
+Natural language request
+        ↓
+Catalog verification
+        ↓
+Purchase proposal
+        ↓
+Explicit confirmation
+        ↓
+Guardrail checks
+        ↓
+Payment
+        ↓
+Auditable result
+```
 
-Currency amounts should be especially easy to scan. The amount should never be buried inside a paragraph.
+The product does not need robots, glowing effects, neural-network backgrounds, sparkles, or futuristic visual effects to communicate that it uses an AI agent.
+
+### Absolutely no emojis
+
+**Do not use emojis anywhere in the application UI.**
+
+This includes:
+
+* Chat messages generated by the interface
+* Buttons
+* Navigation
+* Status indicators
+* Empty states
+* Audit entries
+* Error messages
+* Product cards
+* Headings
+* Notifications
+* Tool activity
+* Decorative elements
+
+Use typography, spacing, borders, icons, and semantic color instead.
+
+If icons are used, use a consistent professional icon set and keep decorative icons `aria-hidden="true"`.
+
+### Avoid AI-slop patterns
+
+Do not use:
+
+* Purple-to-blue gradients
+* Generic indigo SaaS palettes
+* Neon green/blue glowing borders
+* Glassmorphism
+* Frosted-glass cards everywhere
+* Huge rounded containers
+* Excessive pill-shaped components
+* Floating decorative blobs
+* Animated background particles
+* Gradient text
+* "AI-powered" decorative badges
+* Fake trust badges
+* Fake statistics
+* Fake analytics
+* Decorative dashboards
+* Excessive drop shadows
+* Excessive card nesting
+* Large hero sections inside the application
+* Chatbot robot avatars
+* "Magic" or "✨" style language
+* Unnecessary animations
+
+The interface should earn its visual sophistication through **layout, typography, hierarchy, and interaction quality**.
 
 ---
 
-# 6. Color System & Design Tokens
+# 2. Brand Direction
 
-The color system communicates transaction states and policy checks rather than decorative noise. It utilizes a deep charcoal background base with unified indigo primary accents and muted semantic alerts:
+The working product name is:
 
-### Main Colors
-- **Application Background**: `#07090e` (deep slate-charcoal)
-- **Panel/Surface Background**: `#0d111c`
-- **Header/Footer Highlight**: `#121829`
-- **Muted Borders**: Thin transparent white lines (`rgba(255, 255, 255, 0.06)`)
-- **Primary Accent**: `#6366f1` (Indigo/violet, hover state: `#4f46e5`, shadow focus: `rgba(99, 102, 241, 0.2)`)
-- **Muted Gray Text**: `#94a3b8`
+**SureCart AI**
 
-### State & Semantics
-- **Success (Captured)**: Text: `#10b981` (emerald), background panel overlay: `rgba(16, 185, 129, 0.08)`, border accent: `rgba(16, 185, 129, 0.2)`. Used for captured orders and approved checks.
-- **Warning (Attention)**: Text: `#f59e0b` (amber), background panel overlay: `rgba(245, 158, 11, 0.08)`, border accent: `rgba(245, 158, 11, 0.1)`. Used for decline simulations and pending checks.
-- **Error (Refused/Declined)**: Text: `#f43f5e` (crimson), background panel overlay: `rgba(244, 63, 94, 0.08)`, border accent: `rgba(244, 63, 94, 0.2)`. Used for cap refusals and bank payment failures.
+The existing project materials identify SureCart AI as the conversational checkout product. The name may be changed later without changing this design system.
 
-### Spacing & Layout Grid
-- Strict 4px base grid system (4px, 8px, 12px, 16px, 20px, 24px, 32px, 48px).
-- Border-radius tokens: `rounded-xl` (12px) for cards, `rounded-lg` (8px) for input/button, `rounded-md` (6px) for checkboxes and filters.
+The brand should not dominate the interface.
+
+The product name should appear as a compact wordmark in the application header rather than as a large marketing headline.
+
+### Brand personality
+
+SureCart AI should communicate:
+
+**Controlled.
+Reliable.
+Transparent.
+Precise.
+Human-authorized.**
+
+It should not communicate:
+
+**Playful AI.
+Experimental chatbot.
+Futuristic automation.
+Consumer social app.**
 
 ---
 
-# 6.1 Interactive States
+# 3. Human Interaction & Engagement Direction
 
-All interactive controls implement specific feedback transitions:
-- **Primary Button (`Confirm Order`)**: Instantly transitions to disabled state (`opacity-50`, cursor-not-allowed) upon clicking, with a rotating spinner and text `Confirming Order...` to prevent double-clicks.
-- **Suggested Chips**: Hover transitions to darker shades with clean text colors, and focus outline resets to custom indigo shadows (`focus-ring`).
-- **Checkboxes & Toggles**: Custom styled with indigo active colors.
+SureCart AI should feel like an intelligent system working alongside
+the user rather than an AI chatbot presenting information.
 
----
+The interface should communicate intelligence through behavior,
+context, reasoning, and interaction quality rather than through
+AI-themed visual decoration.
 
-# 7. Conversation Interface
+## Quiet Intelligence
 
-The conversation is the primary user experience.
+The product should feel intelligent without constantly announcing
+that it is AI.
 
-The buyer should be able to describe what they want naturally.
+Do not use:
+
+* AI avatars
+* Robot characters
+* Glowing AI orbs
+* "AI MAGIC" labels
+* Decorative AI badges
+* Constant chatbot-style messaging
+
+Instead, intelligence should appear through:
+
+* Contextual observations
+* Useful recommendations
+* Clear reasoning
+* Intent-aware behavior
+* Appropriate uncertainty
+* Meaningful actions
+* User feedback
+* Continuity between decisions
+
+The goal is:
+
+> Make the interface behave intelligently, rather than making
+> the interface look like AI.
+
+## Human Intent
+
+The user's intention should be treated as a first-class concept.
+
+The system should understand what the user is trying to accomplish
+rather than presenting disconnected metrics or recommendations.
+
+Example:
+
+    YOUR GOAL
+
+    Reduce checkout abandonment by 10%.
+
+    I'm focusing on:
+
+    Checkout
+    → Returning visitors
+    → Mobile users
+
+    [ Change direction ]
+
+The user should always feel that they are steering the system.
+
+## Observation → Interpretation → Action
+
+Important AI interactions should generally follow this hierarchy:
+
+    Observation
+        ↓
+    Interpretation
+        ↓
+    Recommendation
+        ↓
+    Human decision
+        ↓
+    Action
+        ↓
+    Result
+
+Use natural language patterns such as:
+
+    I noticed something.
+
+    My take
+
+    What I'd try
+
+Avoid presenting recommendations as unquestionable commands.
+
+## "I Noticed"
+
+When SureCart AI identifies something meaningful, it should be
+able to surface it as an observation.
+
+Example:
+
+    I noticed something.
+
+    Mobile checkout abandonment increased from 41% → 53%.
+
+    That's currently the biggest drop-off in your funnel.
+
+The system should then explain why the observation matters.
+
+## "My Take"
+
+Separate observed facts from interpretation.
+
+Example:
+
+    I noticed
+
+    Mobile conversion dropped 12%.
+
+    My take
+
+    The timing matches the latest checkout layout change.
+
+This makes the distinction between data and AI interpretation clear.
+
+## "What I'd Try"
+
+Recommendations should be actionable but should not imply
+that the AI has authority to make the decision automatically.
+
+Example:
+
+    What I'd try
+
+    Simplify the mobile shipping step.
+
+    Expected impact
+    Medium → High
+
+    Risk
+    Low
+
+    [ Preview ]    [ Try it ]
+
+## User Pushback
+
+Users must be able to disagree with an AI recommendation.
+
+Do not reduce this interaction to:
+
+    Accept / Reject
+
+Instead provide meaningful alternatives:
+
+    What doesn't feel right?
+
+    ○ Too risky
+    ○ Doesn't fit my store
+    ○ I need more evidence
+    ○ I have another idea
+    ○ Something else...
+
+The system should treat this feedback as meaningful context.
+
+## Appropriate Uncertainty
+
+SureCart AI must not pretend to be certain when the available
+evidence is weak.
+
+Example:
+
+    I'm not completely sure about this one.
+
+    The data points toward mobile checkout friction, but there
+    isn't enough traffic yet to be confident.
+
+    I'd watch this for another day before changing anything.
+
+Honest uncertainty should increase trust rather than be treated
+as a failure.
+
+## Why This Matters
+
+Important recommendations should have an optional explanation
+layer.
+
+Example:
+
+    Why this matters →
+
+    This change affects approximately 34% of current checkout
+    traffic.
+
+The default interface should remain concise while allowing the
+user to inspect the reasoning.
+
+## Discovery
+
+The interface should occasionally surface meaningful findings
+without requiring the user to search for them.
+
+Example:
+
+    Good evening.
+
+    I found something worth looking at.
+
+    Your mobile checkout conversion dropped 12% in the last
+    6 hours.
+
+    The change appears isolated to Safari.
+
+    [ Investigate ]
+
+Do not generate observations merely to make the dashboard look
+active. Every surfaced insight must correspond to actual system
+data.
+
+## Continuity & Memory
+
+Important decisions and preferences should remain visible to the
+user.
+
+Example:
+
+    You previously asked me to prioritize conversion over
+    average order value.
+
+    That preference is still active.
+
+The interface should create a sense of continuity without
+pretending to remember information that the system does not
+actually store.
+
+## Partnership Model
+
+The product should communicate:
+
+    Human
+       ↓
+    Intent
+       ↓
+    SureCart AI
+       ↓
+    Observation
+       ↓
+    Recommendation
+       ↓
+    Human decision
+       ↓
+    Action
+       ↓
+    Result
+       ↓
+    Learning
+
+The AI assists with reasoning.
+
+The human remains in control.
+
+The interface should never visually imply that the AI has
+independent authority over purchases or payment.
+
+# 4. Visual Engagement Layer
+
+SureCart AI should include a restrained visual layer that makes the
+product memorable and visually engaging without turning the
+interface into a futuristic AI showcase.
+
+Visual elements must support at least one of:
+
+1. Brand identity
+2. System state
+3. Information comprehension
+4. Feedback
+5. Discovery
+
+Do not add visuals merely to fill empty space.
+
+## Signature Classic Rotating ASCII Donut
+
+SureCart AI may use the classic rotating 3D ASCII donut (the iconic
+mathematical ASCII torus rendered with monospace characters) as a
+signature visual identity element.
+
+The preferred form is a:
+
+```text
+3D rotating ASCII donut / torus
+constructed from dynamic ASCII illumination characters (.,-~:;=!*#$@)
+rendered in JetBrains Mono / monospace
+```
+
+The visual should feel technical, retro-modern, mathematically pure,
+restrained, and editorial.
+
+It should not resemble:
+
+* A robot
+* A human face
+* An AI brain
+* A chatbot avatar
+* A glowing orb
+* A hologram
+* A generic futuristic interface
+
+The visual should be recognizable as a classic computational art
+element that reinforces SureCart AI's engineering integrity and
+transparency.
+
+### Visual Character
+
+The classic ASCII donut should use:
+
+* Standard ASCII luminance ramp (e.g. `.,-~:;=!*#$@`) to simulate 3D surface shading
+* Strict monospace font (`JetBrains Mono`, `font-mono`)
+* A restrained monochrome or brand-compatible text color (`text-text-muted` or `text-accent`)
+* Crisp text rendering with no artificial blur or glassmorphism
+* Mathematical 3D rotation projection (torus geometry rotated across A and B axes)
+* Generous surrounding whitespace
+
+It should look like a genuine piece of live computational art rather
+than a video clip or decorative graphic.
+
+### Motion
+
+The ASCII donut may rotate slowly and smoothly while idle.
+
+The motion should be:
+
+* Slow and rhythmic
+* Smooth 30–60 FPS character updates
+* Visually quiet
+* Non-distracting
+
+Avoid frantic spinning.
+
+Avoid bouncing.
+
+Avoid dramatic scaling.
+
+Avoid constant color flashing.
+
+The visual must respect `prefers-reduced-motion`.
+
+When reduced motion is enabled, replace continuous rotation with a
+static, beautifully shaded ASCII frame.
+
+### System States
+
+The ASCII donut may subtly respond to real SureCart AI states.
 
 Example:
 
 ```text
-I want a pair of blue wireless earbuds.
+IDLE (slow, calm rotation)
+  ↓
+SEARCHING / PROCESSING (focused rotation or tighter glyph luminance)
+  ↓
+PROPOSAL / AWAITING CONFIRMATION (calm, steady state)
+  ↓
+CAPTURED (stable completion frame)
 ```
 
-The agent then uses the catalog tools rather than relying on memory.
+State changes should be subtle.
 
-The interface should make tool-backed information understandable without exposing unnecessary implementation details.
+Do not use dramatic color flashes or loud visual effects.
 
----
+The visual must never imply a system state that does not actually
+exist.
 
-# 8. Message Types
+For example, it must not animate frantic processing if no request
+is occurring.
 
-The conversation should visually distinguish at least these message types:
+## Placement
 
-### Buyer message
+The signature ASCII donut should appear selectively.
 
-A simple conversational message aligned toward the buyer side.
+Preferred locations:
+
+* Initial application state / empty conversation canvas
+* Overview / brand identity area
+* Processing state indicator during search/lookup
+* Major completion state
+
+It should not appear next to every message.
+
+It should not permanently occupy a large percentage of the
+conversation area.
+
+It should never compete with a purchase proposal or confirmation
+action.
+
+During payment and authorization, clarity takes priority over the
+visual.
+
+## Initial / Empty State
+
+The signature ASCII donut can appear in the initial state above or
+beside the primary prompt.
 
 Example:
 
 ```text
-I want a pair of blue wireless earbuds.
+       k--;x=1760;while
+    (k){putchar(k%80?k%
+  80>10?10>k%80?32:b[k]:
+ 10:10);k--;}A+=0.04;B+=
+  0.02;}/***** SureCart AI *****/
+
+What are you looking for?
+
+Describe a product or purchase in your own words.
+
+The agent will check the catalog and show you exactly
+what would be purchased before anything is charged.
 ```
 
-Do not make buyer messages look like system logs.
+The visual should create curiosity and technical delight without
+turning the initial screen into a large marketing hero.
+
+## Insight State
+
+When SureCart AI discovers a meaningful finding or proposal, the
+visual provides subtle technical grounding.
+
+## Processing State
+
+When the system is genuinely processing an operation, the ASCII
+donut may transition into a subtle active rotation state.
+
+The UI copy should remain specific:
+
+```text
+Searching catalog…
+
+Checking product details…
+
+Preparing order…
+```
+
+Do not replace meaningful system status with:
+
+```text
+AI is thinking…
+
+Magic happening…
+```
+
+The visual is supplementary to the status text.
+
+## Contextual Visualizations
+
+Use visual representations when they improve understanding.
+
+Potential patterns include:
+
+* Customer journey flows
+* Checkout funnels
+* Decision trees
+* Relationship diagrams
+* Store activity visualizations
+* Experiment timelines
+* Before/after comparisons
+* Insight graphs
+
+Do not add visualizations merely for decoration.
+
+## Visual Decision Paths
+
+Complex recommendations may be represented as interactive
+decision paths.
+
+Example:
+
+```
+Current state
+    ↓
+Observed issue
+    ↓
+AI interpretation
+    ↓
+Recommendation
+    ↓
+User decision
+    ↓
+Result
+```
+
+The visualization should help the user understand how a decision
+was reached.
+
+## Visual Insight Reveal
+
+Important insights may use a brief visual transition before
+revealing the explanation.
+
+Example:
+
+```
+Data change
+    ↓
+Visual emphasis
+    ↓
+"I noticed something."
+    ↓
+Explanation
+    ↓
+Action
+```
+
+The animation must communicate meaning.
+
+Do not add animation simply because an element is visually empty.
+
+## Editorial Illustrations
+
+Occasional abstract/editorial illustrations may be used for:
+
+* Empty states
+* Onboarding
+* Major discoveries
+* Experiment outcomes
+* Success states
+
+Illustrations should feel bespoke and related to commerce,
+decision-making, or customer behavior.
+
+Avoid generic SaaS stock illustrations.
+
+Avoid AI-themed artwork.
+
+## Visual Engagement Rule
+
+Every visual element must have a purpose.
+
+It should do at least one of the following:
+
+1. Improve comprehension
+2. Communicate system state
+3. Reinforce brand identity
+4. Provide feedback
+5. Create a meaningful moment of discovery
+
+If it does none of these, remove it.
+
+# 5. Color Palette & Semantic Roles
+
+The color system intentionally avoids the common purple/indigo AI aesthetic.
+
+The primary design direction uses **warm neutrals with a muted evergreen accent**.
+
+The accent is used sparingly for actions and positive system states.
+
+## Light Mode
+
+### Base surfaces
+
+| Token              | Hex       | Role                                   |
+| ------------------ | --------- | -------------------------------------- |
+| `--background`     | `#F7F7F4` | Main application background            |
+| `--surface`        | `#FFFFFF` | Primary panels and elevated surfaces   |
+| `--surface-subtle` | `#F1F2EE` | Secondary surfaces and subtle grouping |
+| `--surface-muted`  | `#E8EAE5` | Disabled or tertiary surface           |
+| `--border`         | `#D8DBD4` | Standard borders                       |
+| `--border-strong`  | `#BFC4BA` | Important borders and dividers         |
+
+### Text
+
+| Token              | Hex       | Role                           |
+| ------------------ | --------- | ------------------------------ |
+| `--text-primary`   | `#20231F` | Main text                      |
+| `--text-secondary` | `#5D625A` | Supporting text                |
+| `--text-muted`     | `#7A8077` | Metadata and low-emphasis text |
+| `--text-inverse`   | `#FFFFFF` | Text on dark/primary buttons   |
+
+### Primary accent
+
+| Token             | Hex       | Role                              |
+| ----------------- | --------- | --------------------------------- |
+| `--accent`        | `#176B5B` | Primary actions and active states |
+| `--accent-hover`  | `#125648` | Hover state                       |
+| `--accent-active` | `#0E463B` | Pressed state                     |
+| `--accent-subtle` | `#E2F0EC` | Subtle accent backgrounds         |
+
+The accent should **not** be used for every interactive element.
+
+Use it primarily for actions that matter.
+
+### Semantic states
+
+| Token              | Hex       | Role                                      |
+| ------------------ | --------- | ----------------------------------------- |
+| `--success`        | `#287A4A` | Successful order/payment/guardrail result |
+| `--success-subtle` | `#E6F2E9` | Success background                        |
+| `--warning`        | `#9A6812` | Pending/attention state                   |
+| `--warning-subtle` | `#F8EED9` | Warning background                        |
+| `--error`          | `#B33A32` | Declined/failed/refused state             |
+| `--error-subtle`   | `#F8E6E4` | Error background                          |
+
+These colors should communicate **actual system state**, not decoration.
 
 ---
 
-### Agent message
+# 5. Dark Mode
 
-A conversational response from the shopping agent.
+Dark mode should not simply invert the light palette.
+
+It should use charcoal surfaces with warm-neutral text and the same muted evergreen accent.
+
+## Dark Mode
+
+| Token              | Hex       | Role                        |
+| --------------------| -----------| -----------------------------|
+| `--background`     | `#171916` | Main application background |
+| `--surface`        | `#20231F` | Primary panels              |
+| `--surface-subtle` | `#272B26` | Secondary surfaces          |
+| `--surface-muted`  | `#30352F` | Tertiary surfaces           |
+| `--border`         | `#373C35` | Standard borders            |
+| `--border-strong`  | `#4A5048` | Important borders           |
+| `--text-primary`   | `#F1F2ED` | Main text                   |
+| `--text-secondary` | `#B7BDB4` | Supporting text             |
+| `--text-muted`     | `#858C83` | Metadata                    |
+| `--text-inverse`   | `#17201C` | Text on accent buttons      |
+| `--accent`         | `#55A996` | Primary interactive accent  |
+| `--accent-hover`   | `#69B7A5` | Hover                       |
+| `--accent-active`  | `#408F7E` | Pressed                     |
+| `--accent-subtle`  | `#203C35` | Accent background           |
+| `--success`        | `#67B47F` | Success                     |
+| `--success-subtle` | `#20382A` | Success background          |
+| `--warning`        | `#D2A34A` | Warning                     |
+| `--warning-subtle` | `#3B301E` | Warning background          |
+| `--error`          | `#E2776D` | Error                       |
+| `--error-subtle`   | `#3B2523` | Error background            |
+
+### Dark mode rules
+
+Dark mode must remain restrained.
+
+Do not use:
+
+* Pure black backgrounds
+* Bright neon accents
+* Glowing borders
+* Large luminous gradients
+* White text for every piece of metadata
+
+The background should be dark charcoal rather than `#000000`.
+
+---
+
+# 6. Typography
+
+Use **Inter** as the primary interface typeface.
+
+Use **JetBrains Mono** only for technical metadata where monospaced text genuinely improves readability, such as:
+
+* Order IDs
+* Idempotency identifiers when exposed
+* Technical timestamps if necessary
+* Structured technical values
+
+Do not use monospace for normal product copy.
+
+## Type scale
+
+| Style       | Size    | Weight | Line height | Usage                         |
+| -------------| --------:| -------:| ------------:| -------------------------------|
+| Display     | 32px    | 600    | 1.15        | Rare major application state  |
+| H1          | 24px    | 600    | 1.25        | Main page heading             |
+| H2          | 18px    | 600    | 1.3         | Section heading               |
+| H3          | 15px    | 600    | 1.35        | Component heading             |
+| Body        | 15px    | 400    | 1.55        | Conversation and normal text  |
+| Body Medium | 15px    | 500    | 1.55        | Important conversational text |
+| Small       | 13px    | 400    | 1.45        | Supporting information        |
+| Caption     | 12px    | 500    | 1.4         | Metadata                      |
+| Numeric     | 20–28px | 600    | 1.1         | Prices and important amounts  |
+| Technical   | 12px    | 400    | 1.45        | IDs/technical metadata        |
+
+Use tabular numerals for amounts and columns where numerical comparison matters.
+
+Currency values should be easy to scan.
 
 Example:
 
 ```text
-I found a matching product in the catalog.
+Total
+
+₹2,499
 ```
 
-The agent's responses should remain concise.
-
-Do not make every response look like a technical report.
+Do not make the currency amount visually subordinate to surrounding text.
 
 ---
 
-### Tool activity
+# 7. Spacing System
 
-When the agent queries the catalog or checks an order, show a compact activity indicator.
+Use a **4px base spacing scale**.
+
+| Token      | Value | Usage                      |
+| ------------| ------:| ----------------------------|
+| `space-1`  | 4px   | Tiny internal gaps         |
+| `space-2`  | 8px   | Icon/text gaps             |
+| `space-3`  | 12px  | Compact component spacing  |
+| `space-4`  | 16px  | Standard component padding |
+| `space-5`  | 20px  | Small section spacing      |
+| `space-6`  | 24px  | Standard section spacing   |
+| `space-8`  | 32px  | Major separation           |
+| `space-10` | 40px  | Large separation           |
+| `space-12` | 48px  | Page-level spacing         |
+| `space-16` | 64px  | Major layout separation    |
+
+Prefer consistent spacing over arbitrary values.
+
+The interface should feel spacious without becoming excessively sparse.
+
+---
+
+# 8. Layout Principles
+
+## Desktop
+
+Use a two-surface application layout.
+
+```text
+┌────────────────────────────────────────────────────────────┐
+│ Header                                                     │
+├─────────────────────────────────────┬──────────────────────┤
+│                                     │                      │
+│ Conversation                        │ Agent Activity       │
+│                                     │                      │
+│                                     │                      │
+│                                     │                      │
+│                                     │                      │
+│ Composer                            │                      │
+└─────────────────────────────────────┴──────────────────────┘
+```
+
+Recommended proportions:
+
+* Conversation: 68%
+* Agent Activity: 32%
+
+The audit panel should never dominate the conversation.
+
+## Conversation Internal Structure
+
+The conversation should not behave like a simple sequence of:
+
+    User message
+        ↓
+    AI message
+        ↓
+    Product
+        ↓
+    Confirmation
+
+Instead, when the interaction involves reasoning, the conversation
+should support a richer structure:
+
+    User intent
+        ↓
+    AI observation
+        ↓
+    Evidence
+        ↓
+    AI interpretation
+        ↓
+    Possible action
+        ↓
+    Human decision
+        ↓
+    System action
+        ↓
+    Result
+
+Not every interaction needs to display every stage explicitly.
+
+The UI should reveal the stages that are meaningful for the current
+task without making every interaction feel artificially verbose.
+
+The conversation remains the primary surface.
+
+Agent Activity remains the secondary observable system history.
+
+These two surfaces have different purposes:
+
+* Conversation explains the interaction in human terms.
+* Agent Activity records what the system actually did.
+
+## Maximum content width
+
+Conversation content should have a maximum readable width of approximately **760px** inside its panel.
+
+Messages should not stretch across the entire viewport.
+
+## Audit panel
+
+The audit panel should have its own vertical scroll region.
+
+The conversation should also have its own scroll region.
+
+Avoid scrolling the entire application when only the conversation needs to move.
+
+---
+
+# 9. Responsive Breakpoints
+
+Use these breakpoints:
+
+```text
+< 640px       Mobile
+640–1023px    Tablet / compact
+≥ 1024px      Desktop
+≥ 1280px      Wide desktop
+```
+
+## Mobile — below 640px
+
+* Single-column conversation
+* Audit trail becomes a drawer/sheet
+* Full-width composer
+* Confirmation actions stack vertically if required
+* Maintain 16px minimum page-side padding
+* Buttons have a minimum 44px touch target
+* Do not horizontally scroll
+* Keep the confirmation card fully visible
+
+## Tablet — 640px to 1023px
+
+* Conversation remains primary
+* Audit panel may become narrower
+* If the two-column layout becomes cramped, move the audit trail into a drawer
+
+## Desktop — 1024px+
+
+* Persistent conversation + audit panel
+* Audit panel remains visible
+* Confirmation card stays inside the conversation flow
+
+## Wide desktop — 1280px+
+
+Do not simply stretch every element.
+
+Increase outer margins while keeping readable content widths.
+
+---
+
+# 10. Application Header
+
+The header should be compact.
 
 Example:
 
 ```text
-Searching catalog...
+SureCart AI                              TEST MODE
+Conversational checkout                Session active
 ```
 
-Then resolve it into a readable result:
+Use a subtle bottom border.
+
+Do not use a large navigation bar.
+
+Do not add unrelated navigation items.
+
+The header should establish context without competing with the conversation.
+
+---
+
+# 11. Conversation Design
+
+The conversation is the primary interface.
+
+Use a visually quiet message layout.
+
+## Buyer messages
+
+Buyer messages should be visually distinct but not oversized.
+
+Avoid the traditional highly rounded "messenger bubble" look.
+
+Prefer a compact surface with moderate rounding.
+
+## Agent messages
+
+Agent messages should use the same typographic system but have slightly more available width.
+
+Do not use a chatbot avatar unless there is a functional reason.
+
+The agent should feel like part of the product rather than a cartoon character.
+
+---
+
+# 12. Tool Activity
+
+Tool activity should be visible because it demonstrates that the agent is obtaining information from the actual catalog/system.
+
+Example:
+
+```text
+Searching catalog…
+```
+
+Then:
 
 ```text
 Catalog searched
 Product information verified
 ```
 
-The interface should communicate that the agent obtained information from the catalog rather than simply "thinking."
+Tool activity should be visually quieter than conversational messages.
 
-Avoid exposing raw JSON, internal prompts, stack traces, or implementation details in the primary conversation.
+Do not display raw function calls such as:
+
+```text
+search_catalog({"query":"earbuds"})
+```
+
+in the normal user interface.
+
+The user needs to understand **what happened**, not the implementation syntax.
 
 ---
 
-# 9. Product Information
+# 13. Product Result
 
-When the agent finds a relevant product, present the information clearly.
+When a product is found, show only information supported by the catalog.
 
-Example structure:
+Example:
 
 ```text
 Wireless Earbuds
 
 ₹2,499
 In stock
-Category: Audio
 
-[Product details]
+Category
+Audio
 ```
 
-Only display product information backed by the catalog/tool result.
+The product result should not become a full ecommerce product card.
 
-The UI must not fabricate:
+Do not introduce:
 
-* Price
-* Stock
-* Availability
-* Product attributes
+* Fake reviews
+* Ratings
+* Discount percentages
+* Product badges
+* Stock countdowns
+* "Best seller" labels
+* Recommendations
 
-The PRD explicitly requires current tool results to be the source of truth for these values.
-
-If product images are not available from the structured catalog, do not invent a large image area simply for visual appeal.
-
-The buildathon MVP explicitly allows a hand-typed structured catalog without real catalog images.
+unless those fields actually exist in the project data.
 
 ---
 
-# 10. Purchase Proposal
+# 14. Purchase Proposal
 
-Before an order can be created, the agent must present a specific purchase proposal.
+The purchase proposal is the transition between conversation and authorization.
 
-This should be visually distinct from ordinary chat messages.
+It should be visually stronger than a normal message.
 
-The proposal should communicate:
+Recommended structure:
 
 ```text
-Purchase proposal
+REVIEW PURCHASE
 
-Item
 Wireless Earbuds
 
-Total
 ₹2,499
 
 Why this purchase
-This matches the product you requested and is
-available within the current purchase limits.
+Matches the product you requested and is currently
+available in the catalog.
 
-[Cancel]                 [Confirm order]
+                    [Cancel] [Confirm order]
 ```
 
-The exact reasoning must come from the agent's actual proposal.
+The proposal must clearly show:
 
-Do not create fake explanations or generic filler.
-
-The confirmation proposal must contain, at minimum:
-
-* Exact item(s)
+* Item
 * Exact total
 * Currency
-* One-line reason for the recommendation
+* One-line reason
 
-This directly follows the confirmation rules.
+Do not hide the price in secondary text.
 
 ---
 
-# 11. Confirmation Card
+# 15. Confirmation Card
 
-The confirmation card is the most important interaction in the UI.
+The confirmation card is the most important UI component in SureCart AI.
 
-It should be impossible to mistake it for an ordinary chat message.
+It should communicate that the system is **waiting for explicit buyer authorization**.
 
-It should appear as a clearly bounded section within the conversation.
+Use a subtle border and surface contrast rather than a huge warning-colored card.
 
 Example:
 
 ```text
-┌──────────────────────────────────────────┐
-│ REVIEW ORDER                             │
-│                                          │
-│ Wireless Earbuds                         │
-│ ₹2,499                                   │
-│                                          │
-│ Why                                      │
-│ Matches the product you requested.       │
-│                                          │
-│ This action will create the order.       │
-│                                          │
-│ Cancel              Confirm order        │
-└──────────────────────────────────────────┘
+┌───────────────────────────────────────────┐
+│ REVIEW PURCHASE                           │
+│                                           │
+│ Wireless Earbuds                          │
+│ ₹2,499                                    │
+│                                           │
+│ Why this purchase                         │
+│ Matches the product you requested.        │
+│                                           │
+│ This action will create the order.        │
+│                                           │
+│ Cancel                 Confirm order      │
+└───────────────────────────────────────────┘
 ```
 
-The confirmation action must be a distinct UI action.
-
-Do not automatically interpret:
-
-* "yes"
-* "sure"
-* "sounds good"
-* "go ahead"
-* Previous statements of intent
-
-as confirmation unless the implementation explicitly treats an unambiguous typed confirmation to the currently rendered proposal as valid.
-
-The core rule is that confirmation must correspond to the exact proposal shown.
-
-If the buyer changes:
-
-* Product
-* Quantity
-* Amount
-* Any other order detail
-
-the existing confirmation becomes invalid and a new confirmation proposal must be displayed.
-
-This follows R8–R10.
+The card must never imply that payment has already happened.
 
 ---
 
-# 12. Confirmation Interaction States
+# 16. Confirmation Button
 
-The confirmation card should have clear states.
+The primary action should be:
 
-## Pending
+**Confirm order**
+
+Do not use:
+
+* Continue
+* Proceed
+* Okay
+* Yes
+* Buy
+* Submit
+
+"Confirm order" clearly communicates the action.
+
+The secondary action should be:
+
+**Cancel**
+
+The confirmation button must:
+
+* Have a visible hover state
+* Have a visible `:focus-visible` state
+* Have a disabled/loading state
+* Prevent accidental repeated submission at the UI level
+
+Example loading state:
 
 ```text
-Review order
-
-₹2,499
-
-[Cancel]    [Confirm order]
+Confirming…
 ```
 
-The rest of the payment flow must remain blocked.
+The backend remains responsible for actual duplicate protection through idempotency.
 
 ---
 
-## Confirming
+# 17. Confirmation Rules
 
-After the user presses the confirmation button:
+The interface must follow these rules:
+
+1. A purchase cannot be created merely because the buyer expressed interest.
+2. A confirmation proposal must be shown before authorization.
+3. The buyer must explicitly confirm the displayed proposal.
+4. Confirmation applies only to the exact proposal displayed.
+5. If product, quantity, amount, or other order details change, the previous confirmation becomes invalid.
+6. A hard-cap refusal must never display a confirmation button.
+7. The frontend must not determine whether an order is permitted.
+8. The UI must not display success until the backend confirms success.
+
+These rules are central to the product.
+
+---
+
+# 18. Guardrail Display
+
+Guardrails should be visible but understated.
+
+A compact section can appear within the purchase flow:
 
 ```text
-Confirming order...
+Purchase checks
+
+Per-order limit       Passed
+Session limit         Passed
+Confirmation          Pending
 ```
 
-Disable the button to prevent repeated submission.
+After confirmation:
 
-Do not visually imply that payment succeeded yet.
+```text
+Purchase checks
+
+Per-order limit       Passed
+Session limit         Passed
+Confirmation          Verified
+Duplicate check       Passed
+```
+
+Do not show a check as passed before the corresponding backend check has actually occurred.
+
+Do not create decorative "security" badges.
 
 ---
 
-## Success
+# 19. Spend-Cap Refusal
 
-After the actual order/payment response confirms success:
+If the purchase exceeds the allowed limit, show a clear refusal.
+
+Example:
+
+```text
+I can't proceed with that order.
+
+The proposed amount exceeds the current spending
+limit, so the order cannot be created.
+
+No payment was attempted.
+```
+
+Do not show a confirmation button.
+
+Do not show a payment processing state.
+
+Do not use an aggressive red full-screen error.
+
+The user should understand:
+
+* Why it was refused
+* That payment was not attempted
+* What the current state is
+
+---
+
+# 20. Success State
+
+A successful payment should have a clear but restrained success state.
+
+Example:
 
 ```text
 Order confirmed
@@ -448,16 +1298,27 @@ Your order was created successfully.
 Order status
 Captured
 
+Total
 ₹2,499
 ```
 
-The success state must be based on the actual order/payment result.
+Use the success color only where it communicates actual success.
+
+Do not use confetti.
+
+Do not use celebratory animations.
+
+Do not use emojis.
+
+The seriousness of the product should remain consistent even when the transaction succeeds.
 
 ---
 
-## Declined
+# 21. Declined Payment State
 
-For the deliberate failure path:
+The deliberately failed payment flow should look intentionally handled.
+
+Example:
 
 ```text
 Payment wasn't completed
@@ -472,75 +1333,23 @@ method or cancel the order.
 [Try again]    [Cancel]
 ```
 
-The actual failure explanation must be grounded in the payment system's returned reason.
+If the backend provides a specific reason, use the real reason.
 
-Do not display a generic error if the backend provides a meaningful reason.
+Never expose a stack trace.
 
-The failure must also appear in the audit trail.
+Never silently retry.
 
-These requirements follow R15–R18.
+Never imply that payment succeeded.
 
----
-
-# 13. Spend-Cap Refusal
-
-A hard cap violation should not reach the confirmation stage.
-
-This is an important distinction.
-
-If an order exceeds the permitted amount, the interface should explain the refusal directly.
-
-Example:
-
-```text
-I can't proceed with that order.
-
-The proposed amount exceeds the current per-order
-spending limit, so the order cannot be created.
-
-No payment was attempted.
-```
-
-Do not show:
-
-```text
-Confirm order
-```
-
-after a hard-cap violation.
-
-The PRD specifies that an over-cap proposal is refused before confirmation is offered.
-
-For a session-level cap violation, use the same principle:
-
-```text
-I can't proceed with this order.
-
-Adding this purchase would exceed the remaining
-spending limit for this session.
-
-No payment was attempted.
-```
-
-Do not expose internal implementation terminology such as database queries or policy-layer stack traces.
+The failure must also be represented in the audit trail.
 
 ---
 
-# 14. Audit Trail / Agent Activity Panel
+# 22. Audit Trail
 
-The audit trail is a first-class part of the product.
+The audit trail is a core product surface.
 
-It should not look like a developer console.
-
-It should communicate:
-
-> What happened, why it happened, and what the result was.
-
-The architecture specifies an append-only audit log containing timestamp, actor, action type, reasoning, payload, and result, with the UI showing the information in plain language.
-
-## Desktop appearance
-
-Place the audit panel on the right side.
+It should not look like developer logs.
 
 Header:
 
@@ -548,8 +1357,6 @@ Header:
 Agent Activity
 Session history
 ```
-
-Then show a chronological list.
 
 Example:
 
@@ -591,41 +1398,49 @@ System
 Order created successfully
 ```
 
-Each event should be compact.
+Each entry should remain compact.
 
 ---
 
-# 15. Audit Entry Structure
+# 23. Audit Entry Visual Design
 
-Every visible audit event should contain:
+Each audit event should contain:
 
-1. Timestamp
-2. Human-readable action
-3. Actor
-4. Reasoning/result where relevant
+* Timestamp
+* Action
+* Actor
+* Reason/result
 
-Example:
+Use a thin vertical timeline or subtle event separators.
+
+Do not use oversized icons.
+
+A small semantic marker is sufficient.
+
+Example structure:
 
 ```text
-10:42:12
-Buyer confirmed order
-Buyer
-Confirmed ₹2,499
+● 10:42:12
+  Order confirmed
+  Buyer
+  Confirmed ₹2,499
 ```
 
-The UI does not need to display the entire structured payload by default.
+The event marker can change according to state:
 
-If a details interaction is implemented, it should reveal structured information without replacing the simple human-readable event.
+* Neutral — normal activity
+* Accent — active/current operation
+* Success — successful result
+* Warning — pending/attention
+* Error — failure/refusal
 
-Do not turn the audit trail into a JSON viewer.
-
-The PRD specifically requires one readable line per event rather than unreadable logging noise.
+Do not rely on the marker color alone. The text must state the state.
 
 ---
 
-# 16. Audit Event Categories
+# 24. Audit Event Types
 
-The UI should support the event types defined by the system:
+The interface should support the real system events:
 
 * Catalog search
 * Product retrieval/verification
@@ -638,249 +1453,23 @@ The UI should support the event types defined by the system:
 * Refusal
 * Payment failure
 
-Use subtle visual markers to distinguish them.
-
-Do not create additional fake event categories merely for visual completeness.
+Do not invent fake events for visual completeness.
 
 ---
 
-# 17. Audit Timeline
+# 25. Mobile Audit Trail
 
-The audit trail should be chronological.
+On mobile, the audit trail becomes a drawer or dedicated sheet.
 
-Newest events may appear at the bottom if the panel behaves like a live activity stream, or newest at the top if the design is optimized for scanning.
+Conversation remains the default screen.
 
-Whichever direction is chosen, maintain a clear and consistent chronological relationship.
-
-When a new event is added:
-
-* Keep the transition subtle
-* Do not use dramatic animations
-* Do not flash the entire panel
-* Do not make the page jump unexpectedly
-
-The audit trail should feel like a reliable record, not a notification feed.
-
----
-
-# 18. Guardrail Visualization
-
-Guardrails are a major differentiator of SureCart AI and should be visible without turning the UI into a security dashboard.
-
-When an order is proposed, the UI may show a compact policy summary:
+Example trigger:
 
 ```text
-Purchase checks
-
-Per-order limit       Passed
-Session limit         Passed
-Confirmation          Pending
+Agent Activity
 ```
 
-After confirmation:
-
-```text
-Purchase checks
-
-Per-order limit       Passed
-Session limit         Passed
-Confirmation          Verified
-Duplicate check       Passed
-```
-
-Only show checks that correspond to actual backend state.
-
-Do not show "Passed" before the relevant check has actually happened.
-
-The architecture defines four checks before `create_order` can proceed:
-
-1. Per-order cap
-2. Session cap
-3. Matching explicit confirmation
-4. Idempotency check
-
-Only after all four pass does the payment integration execute.
-
----
-
-# 19. Order Status
-
-When an order exists, its status should be represented clearly.
-
-Supported order states defined by the architecture are:
-
-* Pending
-* Captured
-* Declined
-* Failed
-
-Do not invent additional business states.
-
-Example:
-
-```text
-Order
-GC-XXXX
-
-Status
-Captured
-
-Amount
-₹2,499
-```
-
-The displayed status must be backed by the order state returned by the application.
-
-The agent must not claim an order succeeded, failed, or is pending without a current tool/result backing it.
-
----
-
-# 20. Message Composer
-
-The composer should be simple.
-
-Example:
-
-```text
-┌──────────────────────────────────────────────┐
-│ Describe what you're looking for...       ↑ │
-└──────────────────────────────────────────────┘
-```
-
-The buyer should be able to naturally type requests.
-
-Avoid adding unnecessary controls such as:
-
-* Voice input
-* File upload
-* Image upload
-* Multiple AI modes
-* Model selection
-* Prompt controls
-* Agent personality selectors
-
-These are not part of the MVP.
-
-The PRD explicitly excludes voice interfaces and mobile-native apps.
-
----
-
-# 21. Loading States
-
-Loading states should be understated.
-
-Use text or small indicators such as:
-
-```text
-Searching catalog...
-```
-
-```text
-Checking product details...
-```
-
-```text
-Preparing order...
-```
-
-```text
-Checking payment status...
-```
-
-Avoid large animated loaders.
-
-Do not use "AI is thinking..." as the primary system state when the application is actually performing a specific tool operation.
-
-The UI should communicate what is happening rather than anthropomorphizing the model.
-
----
-
-# 22. Error States
-
-Errors should be written for the buyer, not the developer.
-
-Never show:
-
-```text
-Error: TypeError...
-```
-
-or a stack trace in the product UI.
-
-Instead:
-
-```text
-Something went wrong while checking the order.
-
-No additional payment attempt was made.
-
-Please try again.
-```
-
-If the backend has a meaningful payment failure reason, surface that reason in plain language.
-
-All failures should remain visible in the audit trail.
-
----
-
-# 23. Mobile Layout
-
-The application must work well on phone screens even though the PRD excludes a separate native mobile app.
-
-On mobile, do not attempt to squeeze the desktop two-column layout into the screen.
-
-Use a single primary conversation view.
-
-```text
-┌──────────────────────────────┐
-│ SureCart AI            TEST    │
-├──────────────────────────────┤
-│                              │
-│ Agent message                │
-│                              │
-│ Buyer message                │
-│                              │
-│ Agent activity               │
-│                              │
-│ Product proposal             │
-│                              │
-│ ┌──────────────────────────┐ │
-│ │ REVIEW ORDER             │ │
-│ │                          │ │
-│ │ Wireless Earbuds         │ │
-│ │ ₹2,499                   │ │
-│ │                          │ │
-│ │ Why                      │ │
-│ │ Matches your request.    │ │
-│ │                          │ │
-│ │ Cancel                   │ │
-│ │ Confirm order            │ │
-│ └──────────────────────────┘ │
-│                              │
-├──────────────────────────────┤
-│ Message...                 ↑ │
-└──────────────────────────────┘
-```
-
-The audit trail should become an accessible secondary surface.
-
-Possible interaction:
-
-```text
-Agent Activity  →
-```
-
-opens a full-height or full-screen activity drawer.
-
-The audit panel should not permanently consume half the phone screen.
-
----
-
-# 24. Mobile Audit Trail
-
-On mobile, the audit trail should open as a dedicated sheet/page.
-
-Example:
+When opened:
 
 ```text
 Agent Activity                         Close
@@ -899,854 +1488,1261 @@ Checked current price and stock
 Order confirmed
 Buyer
 Confirmed ₹2,499
-
-10:42:12
-Guardrail approved
-System
-All purchase checks passed
 ```
 
-The buyer should be able to return to the conversation without losing their place.
+The drawer must have a keyboard-accessible close control and an accessible name.
 
 ---
 
-# 25. Responsive Behavior
+# 26. Message Composer
 
-At large widths:
+The composer should be intentionally simple.
 
-* Two-column layout
-* Persistent audit panel
-* Conversation centered within its column
+```text
+┌──────────────────────────────────────────────┐
+│ Describe what you're looking for…        ↑  │
+└──────────────────────────────────────────────┘
+```
 
-At medium widths:
+Use a real `<textarea>` or appropriate form control.
 
-* Reduce audit-panel width
-* Reduce unnecessary spacing
-* Preserve the two-surface model where practical
+The placeholder is not the only label.
 
-At small widths:
+Provide an accessible label such as:
 
-* Conversation becomes the primary full-width surface
-* Audit trail becomes a drawer/sheet
-* Confirmation card remains fully visible
-* Action buttons should be comfortably tappable
-* Avoid horizontal scrolling
+```text
+Message the shopping agent
+```
 
-The confirmation action should never become visually hidden because of responsive layout.
+The send control must have a clear accessible name.
+
+Do not add unnecessary controls such as:
+
+* Voice mode
+* Image generation
+* File upload
+* Model selector
+* Agent personality selector
+* AI mode selector
+
+These are not part of the MVP.
 
 ---
 
-# 26. Accessibility
+# 27. Loading States
 
-The interface should be usable without relying only on color.
+Use specific loading language.
 
-Important states should be communicated through:
-
-* Text
-* Labels
-* Icons where useful
-* Position
-* Typography
-
-Examples:
-
-Instead of only showing a green dot:
+Correct:
 
 ```text
-Payment captured
+Searching catalog…
 ```
-
-Instead of only showing red:
 
 ```text
-Payment declined
+Checking product details…
 ```
-
-Buttons must have clear labels.
-
-Avoid ambiguous actions such as:
 
 ```text
-Continue
+Preparing order…
 ```
-
-for the final payment authorization.
-
-Prefer:
 
 ```text
-Confirm order
+Confirming…
 ```
 
-The buyer must understand what action they are authorizing.
+Incorrect:
+
+```text
+AI is thinking...
+```
+
+```text
+Magic happening...
+```
+
+Loading states should use an ellipsis character `…`, not three periods.
+
+Keep animation subtle and respect `prefers-reduced-motion`.
 
 ---
 
-# 27. Interaction Rules
+# 28. Empty State
 
-The UI must reflect backend authority.
-
-The frontend does not decide whether an order is permitted.
-
-It only displays application state returned by the server.
-
-This follows the architecture requirement that the frontend renders state but does not decide whether an order is allowed.
-
-Therefore:
-
-* Do not implement client-only spend-cap enforcement
-* Do not assume confirmation means payment succeeded
-* Do not assume an order was created because a button was clicked
-* Do not display success until the server confirms success
-* Do not allow UI manipulation to bypass guardrails
-* Do not expose payment/API secrets
-* Do not allow the frontend to directly call Razorpay
-
----
-
-# 28. Explicit Confirmation Interaction
-
-The confirmation button should initiate exactly one confirmation event.
-
-After clicking:
-
-```text
-Confirm order
-```
-
-the button should immediately become unavailable while the request is processed.
+The initial application state should be useful without becoming a marketing hero.
 
 Example:
-
-```text
-Confirming...
-```
-
-This prevents accidental double submission at the UI level.
-
-However, UI disabling is only a usability safeguard.
-
-Actual duplicate prevention must remain server-side through the idempotency mechanism.
-
-The rules explicitly require a unique idempotency key for every proposed order and rejection of reused keys.
-
----
-
-# 29. Failed Payment Interaction
-
-The failure path should be intentionally designed, not treated as a generic error.
-
-Expected sequence:
-
-```text
-Purchase proposal
-        ↓
-Buyer confirms
-        ↓
-Guardrails pass
-        ↓
-Payment attempted
-        ↓
-Payment declined
-        ↓
-Failure logged
-        ↓
-Buyer receives explanation
-        ↓
-Buyer chooses next action
-```
-
-The interface must not automatically loop:
-
-```text
-Retrying...
-Retrying...
-Retrying...
-```
-
-A decline hands control back to the buyer.
-
-The next attempt, if any, requires a new explicit decision and must pass through the guardrails again.
-
----
-
-# 30. Empty State
-
-When the application first opens, the conversation should not look empty or broken.
-
-Use a restrained introduction:
 
 ```text
 What are you looking for?
 
 Describe a product or purchase in your own words.
-I'll check the catalog and show you exactly what
-would be purchased before anything is charged.
+The agent will check the catalog and show you exactly
+what would be purchased before anything is charged.
 ```
 
-Optionally show one or two simple example prompts derived from the actual demo catalog.
+If example prompts are shown, they must be based on the actual seeded catalog.
 
-Do not fabricate product examples if the actual seeded catalog is not known.
-
-Avoid a large marketing hero section.
+Do not invent generic products merely to fill the interface.
 
 ---
 
-# 31. Initial Product Experience
+# 29. Component Styling
 
-The first screen should communicate the product's unique value quickly.
+## Buttons
 
-The buyer should understand:
+### Primary
 
-1. They can ask for something naturally.
-2. The agent checks the catalog.
-3. The agent will show the proposed purchase.
-4. The buyer must explicitly approve it.
-5. The system records what happened.
+* Background: `--accent`
+* Text: `--text-inverse`
+* Border: none
+* Radius: 8px
+* Height: minimum 44px
+* Horizontal padding: 16px
+* Weight: 500
 
-A concise introduction is preferable to several paragraphs of explanation.
+### Primary hover
+
+Use `--accent-hover`.
+
+### Primary active
+
+Use `--accent-active`.
+
+### Primary disabled
+
+Use a muted surface and muted text.
+
+Do not reduce opacity so far that the button becomes unreadable.
+
+### Secondary
+
+* Background: transparent or `--surface`
+* Border: `--border`
+* Text: `--text-primary`
+* Radius: 8px
+* Height: minimum 44px
+
+### Focus
+
+All buttons require a visible `:focus-visible` state.
+
+Use a 2px focus ring with sufficient contrast.
+
+Do not use:
+
+```css
+outline: none;
+```
+
+without an accessible replacement.
 
 ---
 
-# 32. Trust Indicators
+# 30. Cards
 
-Trust should be represented through product behavior and information architecture rather than decorative badges.
+Cards should be used selectively.
 
-Useful persistent information:
+Use cards for:
 
-```text
-TEST MODE
-```
+* Purchase proposal
+* Important product information
+* Order result
+* Failure state
 
-and, where useful:
+Do not wrap:
 
-```text
-Agent Activity
-```
+* Every chat message
+* Every audit event
+* Every section
+* Every button group
 
-The confirmation card itself is the strongest trust indicator because it demonstrates that payment cannot silently happen.
+in separate cards.
 
-The audit trail is the second strongest trust indicator because it shows what happened and why.
+### Card styling
 
-Do not create fake claims such as:
+Light mode:
 
-```text
-100% Secure
-Bank-grade AI
-Military-grade security
-Trusted by thousands
-```
+* Background: `--surface`
+* Border: `--border`
+* Radius: 12px
+* Shadow: subtle only when elevation is meaningful
 
-unless such claims are actually supported by the product.
+Dark mode:
 
----
+* Background: `--surface`
+* Border: `--border`
+* Avoid strong shadows
 
-# 33. Demo-Oriented Interaction Flow
-
-The interface should support the complete buildathon demonstration cleanly.
-
-## Flow A — Successful purchase
-
-```text
-1. Buyer asks for a product
-        ↓
-2. Agent searches catalog
-        ↓
-3. Product information appears
-        ↓
-4. Agent proposes purchase
-        ↓
-5. Confirmation card blocks payment
-        ↓
-6. Buyer explicitly confirms
-        ↓
-7. Guardrails are checked
-        ↓
-8. Razorpay test-mode order/payment executes
-        ↓
-9. Success appears
-        ↓
-10. Audit trail shows the complete sequence
-```
-
-This is the primary happy path defined in the architecture.
+Cards should feel like information containers, not floating decorative objects.
 
 ---
 
-# 34. Demo Flow — Cap Violation
+# 31. Inputs
+
+Inputs should have:
+
+* Visible or programmatically associated label
+* Minimum 44px interactive height
+* Clear border
+* Clear focus state
+* Readable placeholder
+* Proper disabled state
+* Proper error state
+
+Default:
 
 ```text
-Buyer asks for an order above the allowed limit
-        ↓
-Agent proposes/identifies that it cannot proceed
-        ↓
-System rejects it before confirmation
-        ↓
-Buyer sees a plain-language explanation
-        ↓
-Audit trail records the refusal
+background: var(--surface)
+border: 1px solid var(--border)
+border-radius: 8px
 ```
 
-The important visual point is that there should be **no misleading confirmation button** after the hard cap has already been violated.
+Focus:
+
+```text
+border: var(--accent)
+```
+
+with an additional visible focus ring.
+
+Do not rely on placeholder text as the only label.
 
 ---
 
-# 35. Demo Flow — Declined Payment
+# 32. Depth & Elevation
 
-```text
-Buyer asks for product
-        ↓
-Catalog checked
-        ↓
-Purchase proposed
-        ↓
-Buyer confirms
-        ↓
-Guardrails pass
-        ↓
-Test payment deliberately declines
-        ↓
-Failure appears in audit trail
-        ↓
-Buyer receives plain-language explanation
-        ↓
-Concrete next step is offered
-```
+The product should use a **low-elevation interface**.
 
-This should look like a deliberate product state rather than a broken application.
+Most of the visual hierarchy should come from:
 
----
+* Background contrast
+* Borders
+* Spacing
+* Typography
 
-# 36. Demo Flow — Duplicate Confirmation
+rather than shadows.
 
-If the buyer presses confirmation twice or the request is duplicated:
+Use at most three elevation levels:
 
-```text
-First confirmation
-        ↓
-Order created
+### Level 0
 
-Second submission
-        ↓
-Rejected as duplicate
-        ↓
-No second order
-```
+Flat application surfaces.
 
-The UI should not display two successful orders.
+No shadow.
 
-The audit trail may show the duplicate attempt/refusal if that event is surfaced by the backend.
+### Level 1
 
-The underlying protection is the server-side idempotency key, not the button state alone.
+Cards and panels.
+
+Very subtle shadow where needed.
+
+### Level 2
+
+Temporary overlays/drawers.
+
+A slightly stronger shadow.
+
+Avoid dramatic shadows.
+
+Do not use glowing shadows.
 
 ---
 
-# 37. Demo Flow — Changed Order
+# 33. Borders & Radius
 
-If the buyer changes the product or order details after seeing the confirmation card:
+Use restrained corner radii:
 
-```text
-Existing proposal
-        ↓
-Buyer changes request
-        ↓
-Existing proposal becomes invalid
-        ↓
-New proposal generated
-        ↓
-New confirmation required
-```
+* Inputs: 8px
+* Buttons: 8px
+* Cards: 12px
+* Drawers: 16px on the exposed corners
 
-Never allow an old confirmation to authorize a different order.
+Do not use 24px–32px rounding throughout the application.
+
+The interface should feel like a professional tool rather than a collection of floating bubbles.
 
 ---
 
-# 38. Agent Reasoning Presentation
+# 34. Iconography
 
-The project requires the agent to state what it is about to buy, for how much, and why.
+Use one consistent icon family.
 
-This should be presented as concise human-readable reasoning.
+Icons should be:
+
+* Simple
+* Monochrome
+* Small
+* Functional
+
+Icons should support the meaning of text rather than replace it.
+
+Icon-only buttons must have accessible names.
+
+Decorative icons must use:
+
+```text
+aria-hidden="true"
+```
+
+Do not use emoji characters as icons.
+
+---
+
+# 35. Accessibility Requirements
+
+The implementation must follow these rules.
+
+### Semantic HTML
+
+Prefer:
+
+```text
+<button>
+<a>
+<form>
+<label>
+<textarea>
+<h1>–<h6>
+```
+
+over clickable `<div>` or `<span>` elements.
+
+### Keyboard
+
+Every interactive action must work with keyboard input.
+
+The user must be able to:
+
+* Navigate controls with Tab
+* Activate buttons with Enter/Space
+* Close drawers/modals with Escape where appropriate
+* Reach the confirmation action without using a mouse
+
+### Focus
+
+Every interactive element needs a visible `:focus-visible` state.
+
+### Async updates
+
+Important asynchronous state changes should be exposed through appropriate live regions.
+
+Examples:
+
+```text
+Searching catalog…
+Order created successfully.
+Payment was declined.
+```
+
+Use `aria-live="polite"` where appropriate.
+
+### Touch
+
+Interactive controls should have a minimum **44×44px** touch target.
+
+Use:
+
+```css
+touch-action: manipulation;
+```
+
+where appropriate.
+
+### Motion
+
+Respect:
+
+```text
+prefers-reduced-motion
+```
+
+Animations should primarily use:
+
+* opacity
+* transform
+
+Avoid `transition: all`.
+
+---
+
+# 36. Content Rules
+
+The copy should be:
+
+* Direct
+* Specific
+* Human
+* Concise
+* Action-oriented
+
+Prefer:
+
+```text
+Confirm order
+```
+
+over:
+
+```text
+Continue
+```
+
+Prefer:
+
+```text
+Payment was declined. Try again or cancel the order.
+```
+
+over:
+
+```text
+Something went wrong.
+```
+
+Prefer:
+
+```text
+Searching catalog…
+```
+
+over:
+
+```text
+AI is thinking…
+```
+
+Avoid marketing buzzwords such as:
+
+* Revolutionary
+* Next-generation
+* Seamless
+* Transformative
+* Intelligent future
+* AI magic
+* Supercharge
+* Elevate
+
+The product does not need marketing language inside the actual checkout workflow.
+
+---
+
+# 37. Number & Date Formatting
+
+Amounts and dates must be formatted using locale-aware formatting.
+
+Do not hardcode presentation logic such as:
+
+```text
+₹2499
+```
+
+when the application can format the value correctly.
+
+Use `Intl.NumberFormat` / `Intl.DateTimeFormat` or equivalent locale-aware formatting.
+
+Currency should remain clearly associated with the amount.
+
+---
+
+# 38. Long Content Handling
+
+The interface must handle:
+
+* Long product names
+* Long agent responses
+* Long audit reasoning
+* Long order IDs
+* Unexpected catalog values
+
+Do not allow long strings to break the layout.
+
+Use:
+
+* Wrapping
+* Truncation where appropriate
+* Clamping only where information remains accessible
+
+Never assume that every catalog value is short.
+
+---
+
+# 39. Error Handling
+
+Errors must be actionable.
+
+Every user-facing failure should answer:
+
+1. What happened?
+2. What does it mean?
+3. What can the user do next?
 
 Example:
 
 ```text
-I recommend the Wireless Earbuds because they match
-the product you requested and are currently available.
+Payment wasn't completed.
 
-Total: ₹2,499
+The payment was declined by the payment system.
+
+No automatic retry was made.
+
+[Try again] [Cancel]
 ```
 
-Do not expose hidden chain-of-thought.
+Never show raw exceptions or stack traces in the product UI.
 
-The UI should display the concise, user-facing reason associated with the proposal and the audit event.
-
-The purpose is explainability of the decision, not disclosure of private model reasoning.
+Developer diagnostics belong in development tooling/logs, not in the buyer experience.
 
 ---
 
-# 39. Catalog Interaction
+# 40. Interaction Animation
 
-The catalog itself is primarily an agent-readable backend resource.
+Animation should communicate state.
 
-The UI should not turn SureCart AI into a conventional storefront.
+Use only subtle motion for:
 
-A small optional catalog-browse surface can exist if useful, but it should remain secondary to conversational checkout.
+* New messages
+* Tool activity completion
+* Audit event insertion
+* Drawer opening
+* Confirmation state transition
 
-Do not build:
+Do not animate:
 
-* Large product grids
-* Shopping categories navigation
-* Full ecommerce homepage
-* Cart drawer
-* Wishlist
-* Product reviews
-* Recommendation carousels
-* Campaign banners
+* Background gradients
+* Borders continuously
+* Decorative elements
+* Prices
+* Logos
+* Entire page transitions
 
-These would move the interface toward a traditional storefront and away from the core MVP.
+All motion should respect reduced-motion preferences.
 
-The project explicitly scopes the MVP around a small structured catalog and conversational checkout.
+### Signature ASCII Donut Motion
+
+The Signature Classic Rotating ASCII Donut is an intentional exception to
+ordinary decorative animation because it functions as a product
+identity element and system-state indicator.
+
+Its motion must remain:
+
+* Slow
+* Subtle
+* Purposeful
+* Non-distracting
+
+It may rotate continuously only while it is serving as the
+signature idle-state visual.
+
+It may change state when the actual system state changes.
+
+It must stop or become static when `prefers-reduced-motion` is
+enabled.
+
+It must never be used to fabricate activity or processing.
 
 ---
 
-# 40. Do Not Add AI-Themed Decoration
+# 41. Desktop Interaction Model
 
-The project is about AI-agent commerce, but the UI does not need to visually scream "AI."
-
-Avoid:
-
-* Robot icons
-* Neural-network backgrounds
-* Glowing particles
-* "AI magic" animations
-* Chatbot avatars unless genuinely useful
-* Sparkle icons
-* Futuristic HUD interfaces
-* Excessive gradients
-* "Powered by AI" banners
-
-The intelligence should be visible through the interaction itself.
-
-A buyer asking:
+The ideal desktop experience is:
 
 ```text
-Find me something suitable for...
+┌───────────────────────────────────────────────────────────┐
+│ SureCart AI                               TEST MODE         │
+├─────────────────────────────────────┬─────────────────────┤
+│                                     │                     │
+│ Conversation                       │ Agent Activity      │
+│                                     │                     │
+│ Buyer request                       │ Catalog searched    │
+│                                     │                     │
+│ Agent response                      │ Product verified    │
+│                                     │                     │
+│ Product information                 │ Purchase proposed   │
+│                                     │                     │
+│ Purchase proposal                   │                     │
+│                                     │                     │
+│ ┌───────────────────────────────┐   │                     │
+│ │ REVIEW PURCHASE               │   │                     │
+│ │                               │   │                     │
+│ │ Wireless Earbuds              │   │                     │
+│ │ ₹2,499                        │   │                     │
+│ │                               │   │                     │
+│ │ Why this purchase             │   │                     │
+│ │ Matches your request.         │   │                     │
+│ │                               │   │                     │
+│ │ Cancel       Confirm order    │   │                     │
+│ └───────────────────────────────┘   │                     │
+│                                     │                     │
+│ Message the shopping agent…      ↑  │                     │
+└─────────────────────────────────────┴─────────────────────┘
 ```
 
-and receiving a grounded catalog result is enough.
+The audit trail should remain visible during the critical purchase flow.
 
-The strongest visual proof of the technology is the combination of:
+This makes the safety mechanism observable during a demonstration.
+
+### Conversation Experience
+
+The conversation remains the primary interface.
+
+Within the conversation, the UI may contain:
+
+* User intent
+* AI observation
+* Supporting evidence
+* AI interpretation
+* Recommendation
+* Human decision
+* Action
+* Result
+
+These should appear naturally rather than as rigidly numbered
+steps.
+
+The Signature Classic Rotating ASCII Donut may appear in the initial state,
+processing state, or selected insight moments.
+
+It must not permanently occupy conversation space or interfere
+with product information, purchase proposals, confirmation, or
+payment states.
+
+The Agent Activity panel remains responsible for showing the
+actual system activity and audit history.
+
+---
+
+# 42. Mobile Interaction Model
+
+Mobile prioritizes the conversation.
+
+```text
+┌──────────────────────────────┐
+│ SureCart AI             TEST   │
+├──────────────────────────────┤
+│                              │
+│ Agent                        │
+│                              │
+│ Buyer                        │
+│                              │
+│ Product                      │
+│                              │
+│ ┌──────────────────────────┐ │
+│ │ REVIEW PURCHASE           │ │
+│ │                          │ │
+│ │ Wireless Earbuds         │ │
+│ │ ₹2,499                   │ │
+│ │                          │ │
+│ │ Why this purchase        │ │
+│ │ Matches your request.    │ │
+│ │                          │ │
+│ │ Cancel                   │ │
+│ │ Confirm order            │ │
+│ └──────────────────────────┘ │
+│                              │
+│ Agent Activity               │
+├──────────────────────────────┤
+│ Message the shopping agent… ↑│
+└──────────────────────────────┘
+```
+
+The audit trail should open independently rather than consuming permanent screen space.
+
+---
+
+# 43. Product-Specific Do's
+
+### Do
+
+* Make the confirmation step unmistakable.
+* Show the exact amount before authorization.
+* Show the reason for the proposed purchase.
+* Make guardrail state visible.
+* Make payment state explicit.
+* Make failures understandable.
+* Keep the audit trail readable.
+* Show real system state.
+* Use restrained visual hierarchy.
+* Keep the conversation central.
+* Make desktop and mobile feel like the same product.
+* Use light and dark themes consistently.
+* Keep money-related information visually prominent.
+* Make every important action keyboard accessible.
+
+---
+
+# 44. Product-Specific Don'ts
+
+### Don't
+
+* Show a confirmation button after a hard-cap refusal.
+* Claim that an order succeeded before the backend confirms it.
+* Let the frontend determine whether a purchase is allowed.
+* Hide the total amount.
+* Infer confirmation from casual conversational language.
+* Automatically retry a declined payment.
+* Display fake catalog information.
+* Display fake audit events.
+* Show raw backend errors to the buyer.
+* Turn the audit trail into a developer console.
+* Use emojis anywhere in the UI.
+* Use purple/blue AI gradients.
+* Use neon/glowing effects.
+* Use excessive glassmorphism.
+* Fill the page with unnecessary cards.
+* Add fake statistics.
+* Add decorative AI badges.
+* Add unnecessary ecommerce functionality.
+* Make the interface look like a generic chatbot template.
+
+---
+
+# 45. Design Anti-Patterns
+
+The following visual patterns are explicitly prohibited unless a future product requirement provides a concrete reason for them:
+
+```text
+Purple gradient background
+        +
+Glass cards
+        +
+Neon borders
+        +
+Floating blobs
+        +
+AI sparkle icons
+        +
+Huge rounded containers
+        +
+Fake dashboard metrics
+```
+
+This combination is specifically undesirable because it makes the interface look automatically generated rather than intentionally designed.
+
+SureCart AI should instead rely on:
+
+```text
+Warm neutral surfaces
+        +
+Evergreen accent
+        +
+Strong typography
+        +
+Precise spacing
+        +
+Thin borders
+        +
+Low elevation
+        +
+Clear state changes
+        +
+Purposeful interaction
+```
+
+---
+
+# 46. Feature-to-UI Mapping
+
+Every major project requirement should have a visible interface representation.
+
+| Project requirement   | UI representation                 |
+| --------------------- | --------------------------------- |
+| Structured catalog    | Product result/tool activity      |
+| Catalog search        | Search activity                   |
+| Product retrieval     | Product verification activity     |
+| Create order          | Confirmation → order result       |
+| Check status          | Order status display              |
+| Spend cap             | Guardrail/refusal state           |
+| Explicit confirmation | Confirmation card                 |
+| Audit trail           | Agent Activity panel              |
+| Razorpay test mode    | Test Mode indicator               |
+| Successful payment    | Captured order state              |
+| Declined payment      | Graceful failure state            |
+| Idempotency           | Prevent duplicate order result    |
+| Explainability        | Purchase reason + audit reasoning |
+
+Do not create unrelated UI merely to make the product appear larger.
+
+---
+
+# 47. Core User Journeys
+
+SureCart AI has two complementary journeys.
+
+## AI Reasoning Journey
+
+SureCart AI's reasoning experience generally follows:
+
+    INTENT
+        ↓
+    OBSERVE
+        ↓
+    UNDERSTAND
+        ↓
+    EXPLAIN
+        ↓
+    RECOMMEND
+        ↓
+    USER DECIDES
+        ↓
+    ACT
+        ↓
+    MEASURE
+        ↓
+    LEARN
+
+This journey describes how the AI helps the user understand and
+decide.
+
+It does not authorize purchases by itself.
+
+## Commerce Execution Journey
+
+When the interaction results in a purchase, the transaction must
+follow the existing safety sequence:
+
+    ASK
+     ↓
+    SEARCH
+     ↓
+    VERIFY
+     ↓
+    PROPOSE
+     ↓
+    CONFIRM
+     ↓
+    CHECK
+     ↓
+    PAY
+     ↓
+    RESULT
+     ↓
+    AUDIT
+
+The AI reasoning journey must never bypass the commerce execution
+journey.
+
+A recommendation is not authorization.
+
+A conversational statement of intent is not authorization.
+
+The explicit confirmation step remains mandatory.
+
+## AI Reasoning Journey
+
+The reasoning experience should follow:
+
+    INTENT
+        ↓
+    OBSERVE
+        ↓
+    UNDERSTAND
+        ↓
+    EXPLAIN
+        ↓
+    RECOMMEND
+        ↓
+    USER DECIDES
+        ↓
+    ACT
+        ↓
+    MEASURE
+        ↓
+    LEARN
+
+This describes how SureCart AI helps a user understand a situation
+and decide what to do.
+
+The AI can observe, interpret, explain, and recommend.
+
+The user remains in control of consequential decisions.
+
+## Commerce Execution Journey
+
+When the interaction results in a purchase, the transaction flow
+must follow:
+
+```text
+1. ASK
+
+"Find me something suitable for…"
+
+        ↓
+
+2. SEARCH
+
+Catalog searched
+
+        ↓
+
+3. VERIFY
+
+Product and current price verified
+
+        ↓
+
+4. PROPOSE
+
+Item + exact amount + reason
+
+        ↓
+
+5. CONFIRM
+
+Buyer explicitly confirms
+
+        ↓
+
+6. CHECK
+
+Guardrails pass
+
+        ↓
+
+7. PAY
+
+Razorpay test-mode payment
+
+        ↓
+
+8. RESULT
+
+Captured / Declined / Failed
+
+        ↓
+
+9. AUDIT
+
+Complete readable history
+```
+
+The user should be able to understand this sequence simply by using the interface.
+
+These journeys are complementary rather than competing.
+
+The AI reasoning journey explains how the system helps the user
+think and decide.
+
+The commerce execution journey explains how an authorized purchase
+is safely executed.
+
+The reasoning journey must never bypass the commerce safety journey.
+
+For example:
+
+    AI recommendation
+        ↓
+    Human decision
+        ↓
+    Purchase proposal
+        ↓
+    Explicit confirmation
+        ↓
+    Guardrail checks
+        ↓
+    Payment
+        ↓
+    Auditable result
+
+---
+
+# 48. No Fake Product Functionality
+
+Do not create interface elements for functionality that does not exist.
+
+Do not add:
+
+* Wishlist
+* Product comparison
+* Reviews
+* Loyalty
+* Coupons
+* Recommendation feeds
+* Campaign management
+* Merchant analytics
+* User profiles
+* Social features
+* Voice input
+* Native mobile features
+* Production payment controls
+
+The interface should remain focused on the actual MVP.
+
+---
+
+# 49. Final Design Philosophy
+
+SureCart AI should look like a product designed by someone who understands that **money-moving AI requires clarity more than visual spectacle**.
+
+The interface should make the safety model visible through interaction rather than decoration.
+
+A successful visual hierarchy is:
 
 ```text
 Conversation
-        +
-Confirmation
-        +
-Guardrails
-        +
-Audit Trail
+     ↓
+Purchase proposal
+     ↓
+Explicit authorization
+     ↓
+Guardrail state
+     ↓
+Payment result
+     ↓
+Audit history
 ```
 
----
+The product should feel:
 
-# 41. Motion Design
+**Professional, not corporate.**
 
-Use motion sparingly.
+**Modern, not futuristic.**
 
-Appropriate:
+**Technical, not intimidating.**
 
-* Subtle appearance of a new message
-* Small loading transition
-* Confirmation card appearing
-* Audit event entering the timeline
-* Drawer opening on mobile
+**Minimal, not empty.**
 
-Avoid:
+**Interactive, not animated for the sake of animation.**
 
-* Large page transitions
-* Constant animated gradients
-* Pulsing borders
-* Floating elements
-* Excessive hover animations
-* Long delays before displaying information
+**AI-enabled, not AI-themed.**
 
-Interaction should feel fast.
+**Trustworthy, not covered in security badges.**
 
-The PRD identifies a few-second target for catalog queries and order actions.
+The strongest design decision is restraint.
+
+The product should look like a serious commerce application first, with the sophistication of its AI-agent architecture revealed through the quality of its interaction model.
 
 ---
 
-# 42. Spacing and Components
+# 50. Agent Prompt Guide
 
-Use a consistent spacing system.
+Use the following section as the condensed implementation specification when instructing a coding agent.
 
-Prefer:
+## SureCart AI UI Quick Reference
 
-* Generous whitespace
-* Clear section boundaries
+**Visual direction**
+
+* Professional, restrained, high-trust fintech/product interface
+* Human-designed rather than AI-generated
+* Warm neutral foundation
+* Muted evergreen/teal accent
+* Low elevation
 * Thin borders
-* Moderate corner radii
-* Compact controls
-* Strong alignment
+* Moderate 8–12px corner radii
+* Strong typography and spacing
+* No visual clutter
 
-Do not make every element a separate floating card.
+* One restrained Signature Classic Rotating ASCII Donut may be used as a
+  distinctive product identity element.
 
-Cards should be reserved for meaningful grouped information:
+* Preferred form: classic mathematical 3D rotating ASCII torus rendered in
+  JetBrains Mono / monospace (`donut.c` style with `.,-~:;=!*#$@` shading).
 
-* Purchase proposal
-* Product information where necessary
-* Order result
-* Failure state
+* The visual must remain minimal, technical, editorial, and
+  non-humanoid.
 
-The conversation itself should remain visually lightweight.
+* It must not resemble an AI brain, robot, chatbot avatar, glowing
+  orb, hologram, or generic futuristic decoration.
 
----
+* Use it selectively in empty states, overview areas, processing
+  states, and meaningful insight moments.
 
-# 43. Component Structure
+* Do not place it beside every message.
 
-A sensible frontend component structure is:
+* Do not allow it to compete with product information,
+  confirmation, payment, or authorization.
 
-```text
-AppShell
-├── Header
-│   ├── Brand
-│   ├── TestModeIndicator
-│   └── SessionStatus
-│
-├── MainLayout
-│   ├── ChatPanel
-│   │   ├── ConversationHeader
-│   │   ├── MessageList
-│   │   │   ├── BuyerMessage
-│   │   │   ├── AgentMessage
-│   │   │   ├── ToolActivity
-│   │   │   └── ProductResult
-│   │   │
-│   │   ├── PurchaseProposal
-│   │   ├── OrderResult
-│   │   └── MessageComposer
-│   │
-│   └── AuditPanel
-│       ├── AuditHeader
-│       └── AuditTimeline
-│           └── AuditEntry
-│
-└── MobileAuditDrawer
-```
+* Motion must be slow, smooth, and subtle.
 
-The frontend should render state received from the application rather than implementing business-policy decisions itself.
+* Respect `prefers-reduced-motion`.
 
----
+* Never fabricate system activity through animation.
 
-# 44. State Model for UI
+**Absolutely prohibited**
 
-The UI should conceptually support states such as:
+* No emojis anywhere
+* No purple/indigo AI gradients
+* No generic blue SaaS aesthetic
+* No neon/glowing effects
+* No glassmorphism
+* No decorative blobs
+* No fake statistics
+* No fake badges
+* No AI robot imagery
+* No excessive rounded containers
+* No excessive card nesting
+* No gradient text
+* No confetti
 
-```text
-idle
-searching
-product_found
-proposing
-awaiting_confirmation
-confirming
-guardrail_checking
-processing_payment
-success
-declined
-failed
-refused
-```
+**Typography**
 
-These states are UI representations of actual application events.
+* Primary: Inter
+* Technical: JetBrains Mono
+* Body: 15px / 1.55
+* Small: 13px
+* Caption: 12px
+* H1: 24px / 600
+* H2: 18px / 600
+* Important currency: 20–28px / 600
 
-Do not allow the UI to transition to `success` merely because a request was submitted.
-
-Success requires an actual successful backend/payment result.
-
----
-
-# 45. Information Hierarchy
-
-At any moment, the user should be able to answer these questions immediately:
-
-### During browsing
+**Light mode**
 
 ```text
-What product did the agent find?
-What is its current price?
-Is it available?
+Background       #F7F7F4
+Surface          #FFFFFF
+Surface subtle   #F1F2EE
+Border           #D8DBD4
+Primary text     #20231F
+Secondary text   #5D625A
+Muted text       #7A8077
+
+Accent           #176B5B
+Accent hover     #125648
+Accent active    #0E463B
+Accent subtle    #E2F0EC
+
+Success          #287A4A
+Warning          #9A6812
+Error            #B33A32
 ```
 
-### During proposal
+**Dark mode**
 
 ```text
-What am I buying?
-How much is it?
-Why is the agent proposing it?
+Background       #171916
+Surface          #20231F
+Surface subtle   #272B26
+Border           #373C35
+Primary text     #F1F2ED
+Secondary text   #B7BDB4
+Muted text       #858C83
+
+Accent           #55A996
+Accent hover     #69B7A5
+Accent active    #408F7E
+Accent subtle    #203C35
+
+Success          #67B47F
+Warning          #D2A34A
+Error            #E2776D
 ```
 
-### During confirmation
+**Spacing**
+
+Use a 4px base grid:
 
 ```text
-What exactly am I authorizing?
+4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64px
 ```
 
-### During payment
+**Layout**
+
+* Desktop: approximately 68% conversation / 32% audit
+* Mobile: conversation only + audit drawer
+* Breakpoints: 640px / 1024px / 1280px
+* Minimum touch target: 44×44px
+* Conversation max readable width: approximately 760px
+
+**Core components**
 
 ```text
-Is the order being processed?
+Header
+ChatPanel
+BuyerMessage
+AgentMessage
+ToolActivity
+ProductResult
+PurchaseProposal
+ConfirmationCard
+GuardrailStatus
+OrderResult
+FailureState
+MessageComposer
+AuditPanel
+AuditEntry
+MobileAuditDrawer
 ```
 
-### After payment
+**Critical interaction rules**
 
-```text
-Did it succeed?
-What is the order status?
-```
+* Never create an order without explicit confirmation.
+* Confirmation applies only to the exact displayed proposal.
+* Product/quantity/amount changes invalidate previous confirmation.
+* Hard-cap refusal must not display a confirmation button.
+* Frontend does not determine authorization.
+* Never show payment success without backend confirmation.
+* Never automatically retry a declined payment.
+* Show actual order/payment state.
+* Record important actions in the audit trail.
+* Use `aria-live="polite"` for relevant asynchronous state changes.
+* Use semantic HTML.
+* All interactive elements require keyboard access.
+* All interactive elements require visible `:focus-visible`.
+* Respect `prefers-reduced-motion`.
+* Never use `transition: all`.
+* Never use emoji characters.
+* Never expose raw stack traces or secrets.
 
-### During failure
+* Treat user intent, AI observation, evidence, interpretation,
+  recommendation, and human decision as distinct concepts where
+  applicable.
 
-```text
-What happened?
-Was I charged?
-What can I do next?
-```
+* Allow meaningful user pushback on recommendations.
 
-### At any point
+* Communicate uncertainty when evidence is insufficient.
 
-```text
-What has the agent done so far?
-Why did it do it?
-```
+* Never fabricate insights, activity, statistics, confidence,
+  memory, or system state.
 
-The interface should be designed around answering these questions rather than around displaying every internal system detail.
+* AI reasoning must never bypass the commerce authorization flow.
 
----
+**Human interaction principles**
 
-# 46. Auditability as a Visual Principle
+* Treat user intent as a first-class concept.
 
-The audit trail should make it possible to reconstruct the session as a simple narrative:
+* Make meaningful observations explicit.
 
-```text
-The buyer asked for X.
-The agent searched the catalog.
-The product was verified.
-The agent proposed X for ₹Y because Z.
-The buyer explicitly confirmed.
-The guardrails approved the request.
-The order was created.
-The payment was captured.
-```
+* Separate observed evidence from AI interpretation.
 
-For a failed flow:
+* Use "I noticed", "My take", and "What I'd try" patterns when
+  appropriate.
 
-```text
-The buyer confirmed.
-The guardrails approved.
-The payment was attempted.
-The payment was declined.
-The failure was recorded.
-The buyer was given the next step.
-```
+* Allow users to push back on recommendations.
 
-This narrative is more important than exposing technical implementation details.
+* Do not present AI recommendations as commands.
 
-The PRD defines auditability as reconstructing "what happened and why" without engineering knowledge.
+* Communicate uncertainty when evidence is insufficient.
 
----
+* Surface meaningful discoveries only when supported by real data.
 
-# 47. Security Visibility
+* Do not fabricate activity, insights, statistics, confidence,
+  memory, or system state.
 
-Do not expose:
+* Preserve the user's control over consequential decisions.
 
-* Razorpay secret keys
-* LLM API keys
-* Internal authentication secrets
-* Raw webhook payloads containing sensitive information
-* Internal server implementation details
+* Make the AI feel like a capable collaborator rather than a
+  chatbot character.
 
-The UI should never imply that the browser directly controls payment authorization.
+* Do not force every interaction into a conversational script.
 
-Secrets remain server-side according to the architecture and security requirements.
+* Keep the interface concise by default and allow deeper reasoning
+  to be inspected when useful.
 
----
+**Two-journey model**
 
-# 48. What the UI Should Communicate About the Product
+AI reasoning:
 
-Without requiring the user to read documentation, the interface should naturally demonstrate the project's core proposition:
+    Intent → Observe → Understand → Explain → Recommend
+    → User decides → Act → Measure → Learn
 
-```text
-Traditional checkout:
+Commerce execution:
 
-Browse → Cart → Checkout → Pay
+    Search → Verify → Propose → Confirm → Guardrails
+    → Pay → Result → Audit
 
-SureCart AI:
+The AI reasoning journey must never bypass the commerce execution
+journey or its authorization requirements.
 
-Describe → Agent searches → Proposal → Confirm → Pay
-                              ↓
-                         Guardrails
-                              ↓
-                         Audit trail
-```
+**Core visual principle**
 
-The product should demonstrate that the agent is not given unrestricted authority over payment.
-
----
-
-# 49. Design Priorities
-
-When making implementation decisions, use this priority order:
-
-### 1. Correctness
-
-The UI must accurately represent backend state.
-
-### 2. Confirmation clarity
-
-The buyer must never be confused about what they are authorizing.
-
-### 3. Auditability
-
-Important actions must remain visible and understandable.
-
-### 4. Failure clarity
-
-A declined payment must feel handled rather than broken.
-
-### 5. Responsiveness
-
-The core experience must work on both desktop and mobile.
-
-### 6. Visual polish
-
-Only after the above are correct should decorative polish be added.
-
----
-
-# 50. Explicitly Out of Scope for the UI
-
-Do not build UI for functionality that is explicitly outside the MVP:
-
-* Upsell/cross-sell
-* Campaign orchestration
-* Live production payments
-* Multi-merchant management
-* Merchant administration dashboard
-* Real catalog ingestion
-* Native agent-commerce protocol controls
-* Voice interface
-* Mobile-native application
-* Advanced analytics dashboard
-* Marketing homepage
-* Customer loyalty features
-* Reviews
-* Wishlist
-* General ecommerce cart features
-
-The PRD defines these as non-goals or future functionality.
-
----
-
-# 51. Final Visual Direction
-
-The finished interface should look like a real product that could plausibly sit between a merchant and an AI shopping agent.
-
-It should feel:
-
-**Quiet rather than flashy.**
-
-**Structured rather than decorative.**
-
-**Modern rather than futuristic.**
-
-**Trustworthy rather than promotional.**
-
-**Interactive rather than animated.**
-
-**Human-designed rather than AI-generated.**
-
-The visual identity should come from excellent spacing, typography, hierarchy, interaction states, and information design.
-
-The central visual story should always remain:
-
-```text
-                SureCart AI
-
-        CONVERSATIONAL CHECKOUT
-
-Buyer ────────► Agent
-                  │
-                  ▼
-              Catalog
-                  │
-                  ▼
-             Proposal
-                  │
-                  ▼
-          Explicit Confirmation
-                  │
-                  ▼
-             Guardrails
-                  │
-                  ▼
-          Razorpay Test Mode
-                  │
-                  ▼
-              Result
-
-        ┌───────────────────────┐
-        │     AUDIT TRAIL       │
-        │ What happened + why   │
-        └───────────────────────┘
-```
-
-The interface succeeds if a person watching the demo can understand the entire safety model without being told:
-
-**The agent can search.
-The agent can propose.
-The agent cannot independently authorize payment.
-The system enforces the limits.
-The buyer explicitly confirms.
-Every important decision is recorded.
-If payment fails, control returns to the buyer.**
-
-That is the UI's core job.
-
----
-
-# 52. Design References & Skills
-
-To maintain high visual quality, accessibility, and E2E behavioral robustness, the design and implementation of SureCart AI utilizes the following design-development reference standards:
-
-1. **Taste Skill**
-   - **URL**: [https://www.tasteskill.dev/](https://www.tasteskill.dev/)
-   - **Purpose**: Establishes modern, polished visual standards and aesthetic quality benchmarks.
-   - **Influence on SureCart AI**: Guides layout density, color harmony, and typographic breathing room to ensure the workspace feels premium and human-designed rather than AI-generated.
-
-2. **Vercel Web Design Guidelines / Agent Skill**
-   - **URL**: [https://github.com/vercel-labs/agent-skills/blob/main/skills/web-design-guidelines/SKILL.md](https://github.com/vercel-labs/agent-skills/blob/main/skills/web-design-guidelines/SKILL.md)
-   - **Purpose**: A rigorous set of standards for accessibility (WCAG contrast levels, focus indicators), keyboard support, forgiving inputs, semantic HTML structures, and responsive viewport guidelines.
-   - **Influence on SureCart AI**: Sets the bar for contrast ratios, custom focus borders (`focus-ring`), HTML semantic elements, and responsive single-column layouts for mobile viewports.
-
-3. **Image-to-Code Skill**
-   - **URL**: [https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md](https://github.com/Leonxlnx/taste-skill/blob/main/skills/image-to-code-skill/SKILL.md)
-   - **Purpose**: Defines workflow requirements for visual translation, warning against nested card chaos, text scaling mismatches, and over-cluttered dashboard layouts.
-   - **Influence on SureCart AI**: Inspired the removal of text-heavy banners in favor of visual suggetsion card grids and sleek checkout widgets.
-
-4. **Awesome Design**
-   - **URL**: [https://github.com/VoltAgent/awesome-design-md/](https://github.com/VoltAgent/awesome-design-md/)
-   - **Purpose**: Collection of design frameworks, typography guides, and interaction models.
-   - **Influence on SureCart AI**: Directs font hierarchy scale, numerical alignment rules, and transition timing curves.
-
-5. **Playwright CLI**
-   - **URL**: [https://github.com/microsoft/playwright-cli](https://github.com/microsoft/playwright-cli)
-   - **Purpose**: Automated browser action scripting and visual regression assertion.
-   - **Influence on SureCart AI**: Forms the foundation of automated E2E interface state verification during development (Flow A, B, C, D).
-
----
-
-# 53. Future Design Development
-
-All future UI/UX development, components, routing layouts, and interactions built for **SureCart AI** must consult the listed design references and preserve strict consistency with the color system, typography variables, spacing grid, and gating checklist states established in this document. 
-
-The references listed in Section 52 are living standards. If any reference undergoes updates, developers should consult the updated specifications to refine the product while preserving SureCart AI's core security-first checkout identity. Any major architectural visual transitions must update this design specification accordingly.
+> Make the system feel trustworthy because it is clear, bounded, and auditable — not because it is decorated to look trustworthy.

@@ -2,6 +2,7 @@ import {
   getOrderByCustomerKey,
   getSessionTotalSpent,
   getConfirmationToken,
+  getSessionCaps,
   insertAuditLog,
 } from "@/lib/db";
 import { GuardrailEvaluation, GuardrailCheckDetail, CatalogItem } from "@/types";
@@ -19,18 +20,21 @@ export function evaluateProposalCaps(
   item: CatalogItem
 ): { allowed: boolean; refusalReason?: string; checkDetails: GuardrailCheckDetail[] } {
   const currentSpent = getSessionTotalSpent(sessionId);
+  const caps = getSessionCaps(sessionId);
+  const perOrderCap = caps.per_order_cap || DEFAULT_PER_ORDER_CAP;
+  const sessionCap = caps.per_session_cap || DEFAULT_PER_SESSION_CAP;
   const checks: GuardrailCheckDetail[] = [];
 
   // Check 1: Per-order cap
-  const perOrderPassed = amount <= DEFAULT_PER_ORDER_CAP;
+  const perOrderPassed = amount <= perOrderCap;
   checks.push({
     name: "Per-Order Cap",
     passed: perOrderPassed,
-    limit: DEFAULT_PER_ORDER_CAP,
+    limit: perOrderCap,
     current_value: amount,
     message: perOrderPassed
-      ? `Amount ₹${amount.toLocaleString("en-IN")} is within per-order limit (₹${DEFAULT_PER_ORDER_CAP.toLocaleString("en-IN")})`
-      : `Proposed amount ₹${amount.toLocaleString("en-IN")} exceeds per-order limit of ₹${DEFAULT_PER_ORDER_CAP.toLocaleString("en-IN")}`,
+      ? `Amount ₹${amount.toLocaleString("en-IN")} is within per-order limit (₹${perOrderCap.toLocaleString("en-IN")})`
+      : `Proposed amount ₹${amount.toLocaleString("en-IN")} exceeds per-order limit of ₹${perOrderCap.toLocaleString("en-IN")}`,
   });
 
   if (!perOrderPassed) {
@@ -41,12 +45,12 @@ export function evaluateProposalCaps(
       session_id: sessionId,
       actor: "system",
       action_type: "refusal",
-      reasoning: `Order proposal refused: ₹${amount.toLocaleString("en-IN")} exceeds per-order limit of ₹${DEFAULT_PER_ORDER_CAP.toLocaleString("en-IN")}`,
+      reasoning: `Order proposal refused: ₹${amount.toLocaleString("en-IN")} exceeds per-order limit of ₹${perOrderCap.toLocaleString("en-IN")}`,
       payload: {
         item_id: item.id,
         item_name: item.name,
         amount,
-        limit: DEFAULT_PER_ORDER_CAP,
+        limit: perOrderCap,
         violation: "per_order_cap_exceeded",
       },
       result: "refused",
@@ -54,22 +58,22 @@ export function evaluateProposalCaps(
 
     return {
       allowed: false,
-      refusalReason: `I cannot proceed with this purchase because ₹${amount.toLocaleString("en-IN")} exceeds the per-order spending limit of ₹${DEFAULT_PER_ORDER_CAP.toLocaleString("en-IN")}. No payment was attempted.`,
+      refusalReason: `I cannot proceed with this purchase because ₹${amount.toLocaleString("en-IN")} exceeds the per-order spending limit of ₹${perOrderCap.toLocaleString("en-IN")}. No payment was attempted.`,
       checkDetails: checks,
     };
   }
 
   // Check 2: Running session total cap
   const projectedSessionTotal = currentSpent + amount;
-  const sessionPassed = projectedSessionTotal <= DEFAULT_PER_SESSION_CAP;
+  const sessionPassed = projectedSessionTotal <= sessionCap;
   checks.push({
     name: "Session Cumulative Cap",
     passed: sessionPassed,
-    limit: DEFAULT_PER_SESSION_CAP,
+    limit: sessionCap,
     current_value: projectedSessionTotal,
     message: sessionPassed
-      ? `Projected session spend ₹${projectedSessionTotal.toLocaleString("en-IN")} is within session limit (₹${DEFAULT_PER_SESSION_CAP.toLocaleString("en-IN")})`
-      : `Adding ₹${amount.toLocaleString("en-IN")} would bring session spend to ₹${projectedSessionTotal.toLocaleString("en-IN")}, exceeding session cap of ₹${DEFAULT_PER_SESSION_CAP.toLocaleString("en-IN")}`,
+      ? `Projected session spend ₹${projectedSessionTotal.toLocaleString("en-IN")} is within session limit (₹${sessionCap.toLocaleString("en-IN")})`
+      : `Adding ₹${amount.toLocaleString("en-IN")} would bring session spend to ₹${projectedSessionTotal.toLocaleString("en-IN")}, exceeding session cap of ₹${sessionCap.toLocaleString("en-IN")}`,
   });
 
   if (!sessionPassed) {
@@ -79,14 +83,14 @@ export function evaluateProposalCaps(
       session_id: sessionId,
       actor: "system",
       action_type: "refusal",
-      reasoning: `Order proposal refused: Adding ₹${amount.toLocaleString("en-IN")} exceeds session limit of ₹${DEFAULT_PER_SESSION_CAP.toLocaleString("en-IN")} (Current spent: ₹${currentSpent.toLocaleString("en-IN")})`,
+      reasoning: `Order proposal refused: Adding ₹${amount.toLocaleString("en-IN")} exceeds session limit of ₹${sessionCap.toLocaleString("en-IN")} (Current spent: ₹${currentSpent.toLocaleString("en-IN")})`,
       payload: {
         item_id: item.id,
         item_name: item.name,
         amount,
         current_session_spent: currentSpent,
         projected_session_spent: projectedSessionTotal,
-        session_limit: DEFAULT_PER_SESSION_CAP,
+        session_limit: sessionCap,
         violation: "session_cap_exceeded",
       },
       result: "refused",
@@ -94,7 +98,7 @@ export function evaluateProposalCaps(
 
     return {
       allowed: false,
-      refusalReason: `I cannot proceed with this purchase. Adding ₹${amount.toLocaleString("en-IN")} to your current session total (₹${currentSpent.toLocaleString("en-IN")}) would exceed the maximum session limit of ₹${DEFAULT_PER_SESSION_CAP.toLocaleString("en-IN")}. No payment was attempted.`,
+      refusalReason: `I cannot proceed with this purchase. Adding ₹${amount.toLocaleString("en-IN")} to your current session total (₹${currentSpent.toLocaleString("en-IN")}) would exceed the maximum session limit of ₹${sessionCap.toLocaleString("en-IN")}. No payment was attempted.`,
       checkDetails: checks,
     };
   }
@@ -122,30 +126,33 @@ export function evaluateOrderGuardrails(params: {
 }): GuardrailEvaluation {
   const { sessionId, confirmationToken, idempotencyKey, itemId, amount } = params;
   const currentSpent = getSessionTotalSpent(sessionId);
+  const caps = getSessionCaps(sessionId);
+  const perOrderCap = caps.per_order_cap || DEFAULT_PER_ORDER_CAP;
+  const sessionCap = caps.per_session_cap || DEFAULT_PER_SESSION_CAP;
 
   // Check 1: Per-order cap
-  const perOrderPassed = amount <= DEFAULT_PER_ORDER_CAP;
+  const perOrderPassed = amount <= perOrderCap;
   const perOrderCheck: GuardrailCheckDetail = {
     name: "Per-Order Cap",
     passed: perOrderPassed,
-    limit: DEFAULT_PER_ORDER_CAP,
+    limit: perOrderCap,
     current_value: amount,
     message: perOrderPassed
-      ? `Passed (₹${amount.toLocaleString("en-IN")} <= ₹${DEFAULT_PER_ORDER_CAP.toLocaleString("en-IN")})`
-      : `Failed: ₹${amount.toLocaleString("en-IN")} exceeds ₹${DEFAULT_PER_ORDER_CAP.toLocaleString("en-IN")}`,
+      ? `Passed (₹${amount.toLocaleString("en-IN")} <= ₹${perOrderCap.toLocaleString("en-IN")})`
+      : `Failed: ₹${amount.toLocaleString("en-IN")} exceeds ₹${perOrderCap.toLocaleString("en-IN")}`,
   };
 
   // Check 2: Session cumulative cap
   const projectedSessionTotal = currentSpent + amount;
-  const sessionPassed = projectedSessionTotal <= DEFAULT_PER_SESSION_CAP;
+  const sessionPassed = projectedSessionTotal <= sessionCap;
   const sessionCheck: GuardrailCheckDetail = {
     name: "Session Cumulative Cap",
     passed: sessionPassed,
-    limit: DEFAULT_PER_SESSION_CAP,
+    limit: sessionCap,
     current_value: projectedSessionTotal,
     message: sessionPassed
-      ? `Passed (₹${projectedSessionTotal.toLocaleString("en-IN")} <= ₹${DEFAULT_PER_SESSION_CAP.toLocaleString("en-IN")})`
-      : `Failed: Session total ₹${projectedSessionTotal.toLocaleString("en-IN")} exceeds ₹${DEFAULT_PER_SESSION_CAP.toLocaleString("en-IN")}`,
+      ? `Passed (₹${projectedSessionTotal.toLocaleString("en-IN")} <= ₹${sessionCap.toLocaleString("en-IN")})`
+      : `Failed: Session total ₹${projectedSessionTotal.toLocaleString("en-IN")} exceeds ₹${sessionCap.toLocaleString("en-IN")}`,
   };
 
   // Check 3: Explicit confirmation token validation

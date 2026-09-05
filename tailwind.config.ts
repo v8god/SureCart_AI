@@ -6,60 +6,57 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
         background: "var(--background)",
-        foreground: "var(--foreground)",
-        border: "var(--border)",
-        panel: "var(--panel)",
-        "panel-header": "var(--panel-header)",
-        card: "var(--card)",
-        muted: "var(--muted)",
-        "muted-foreground": "var(--muted-foreground)",
-        primary: {
-          DEFAULT: "var(--primary)",
-          hover: "var(--primary-hover)",
-          foreground: "var(--primary-foreground)",
+        surface: {
+          DEFAULT: "var(--surface)",
+          subtle: "var(--surface-subtle)",
+          muted: "var(--surface-muted)",
+        },
+        border: {
+          DEFAULT: "var(--border)",
+          strong: "var(--border-strong)",
+        },
+        text: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+          inverse: "var(--text-inverse)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
+          active: "var(--accent-active)",
+          subtle: "var(--accent-subtle)",
         },
         success: {
           DEFAULT: "var(--success)",
-          surface: "var(--success-surface)",
-          foreground: "var(--success-foreground)",
+          subtle: "var(--success-subtle)",
         },
         warning: {
           DEFAULT: "var(--warning)",
-          surface: "var(--warning-surface)",
-          foreground: "var(--warning-foreground)",
+          subtle: "var(--warning-subtle)",
         },
         error: {
           DEFAULT: "var(--error)",
-          surface: "var(--error-surface)",
-          foreground: "var(--error-foreground)",
+          subtle: "var(--error-subtle)",
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        display: ["var(--font-display)", "Plus Jakarta Sans", "sans-serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
-      keyframes: {
-        pulseSubtle: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
-        },
-        fadeIn: {
-          from: { opacity: "0", transform: "translateY(4px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-      },
-      animation: {
-        "pulse-subtle": "pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "fade-in": "fadeIn 0.25s ease-out forwards",
+      borderRadius: {
+        input: "8px",
+        button: "8px",
+        card: "12px",
+        drawer: "16px",
       },
     },
   },
   plugins: [],
 };
-
 export default config;
